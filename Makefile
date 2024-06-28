@@ -19,24 +19,15 @@ fix:
 build:
 	cargo build
 
+.PHONY: build-all
+build-all:
+	cargo build --no-default-features --features "argon2"
+	cargo build --no-default-features --features "scrypt"
+	cargo build
+
 .PHONY: build-release
 build-release:
 	cargo build --release
-
-# hash crate is pbkdf2
-.PHONY: run
-run:
-	RUST_LOG=debug cargo run -- ./config/local.toml -d
-
-# hash crate is argon2
-.PHONY: run-argon2
-run-argon2:
-	RUST_LOG=debug cargo run --no-default-features --features "argon2" -- ./config/local.toml -d
-
-# hash crate is scrypt
-.PHONY: run-scrypt
-run-scrypt:
-	RUST_LOG=debug cargo run --no-default-features --features "scrypt" -- ./config/local.toml -d
 
 .PHONY: compile
 compile:
@@ -46,9 +37,24 @@ compile:
 test:
 	cargo test
 
-.PHONY: update-deps
-update-deps:
-	cargo machete
+#------------------------------------------------------------------------------
+# execute
+#------------------------------------------------------------------------------
+# hash crate is pbkdf2
+.PHONY: run
+run:
+	RUST_LOG=debug cargo run --package actix -- ./config/local.toml -d
+
+# hash crate is argon2
+.PHONY: run-argon2
+run-argon2:
+	RUST_LOG=debug cargo run --package actix --no-default-features --features "argon2" -- ./config/local.toml -d
+
+# hash crate is scrypt
+.PHONY: run-scrypt
+run-scrypt:
+	RUST_LOG=debug cargo run --package actix --no-default-features --features "scrypt" -- ./config/local.toml -d
+
 
 #------------------------------------------------------------------------------
 # sea-orm
@@ -83,7 +89,7 @@ setup-sea-orm:
 .PHONY: generate-entity-from-db
 generate-entity-from-db:
 	rm -rf src/schemas
-	sea-orm-cli generate entity -u postgresql://admin:admin@127.0.0.1:5432/example -o src/schemas --with-serde both
+	sea-orm-cli generate entity -u postgresql://admin:admin@127.0.0.1:5432/example -o crates/components/src/schemas --with-serde both
 
 #------------------------------------------------------------------------------
 # docker

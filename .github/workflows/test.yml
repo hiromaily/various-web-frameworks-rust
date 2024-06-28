@@ -22,7 +22,9 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Build test
+      - name: Build test for any features
+        run: make build-all
+      - name: Build test for release
         run: cargo build --release --verbose
       - name: Check formatting
         run: cargo fmt --all --check
