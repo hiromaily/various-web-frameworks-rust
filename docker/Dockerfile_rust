@@ -5,12 +5,15 @@ RUN apt-get update -y && \
   apt-get install -y pkg-config \
   libssl-dev
 
-RUN USER=root cargo new --bin actix-web-server
-WORKDIR /actix-web-server
+WORKDIR /workspace
+
+# RUN USER=root cargo new --bin actix
+# RUN USER=root cargo new --lib components
+# WORKDIR /actix-web-server
 
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./config/container.toml ./container.toml
-COPY ./src ./src
+COPY ./crates ./crates
 
 RUN cargo build --release
 
@@ -20,12 +23,12 @@ FROM debian:buster-slim
 #FROM scratch
 RUN apt-get update && apt install -y openssl
 
-COPY --from=builder /actix-web-server/target/release/api-server /usr/local/bin/api-server
-COPY --from=builder /actix-web-server/container.toml /container.toml
+COPY --from=builder /workspace/target/release/actix /usr/local/bin/actix
+COPY --from=builder /workspace/container.toml /container.toml
 
 # Run the application
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/api-server"]
+ENTRYPOINT ["/usr/local/bin/actix"]
 
 CMD ["container.toml"]

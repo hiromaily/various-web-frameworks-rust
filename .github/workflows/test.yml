@@ -32,24 +32,24 @@ jobs:
         run: cargo clippy --all-targets --all-features
       - name: Run unit tests
         run: cargo test --verbose
-      # - name: Install hurl for integration test
-      #   run: |
-      #     VERSION=4.3.0
-      #     curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/$VERSION/hurl_${VERSION}_amd64.deb
-      #     sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb
-      #     hurl --version
-      # - name: Build Docker for API server and Postgresql
-      #   run: |
-      #     make build-image
-      # - name: Run Docker Postgresql first
-      #   run: |
-      #     docker compose up -d postgresql
-      #     sleep 20
-      # - name: Run Docker Rust API Servers second
-      #   run: |
-      #     docker compose up -d server
-      #     sleep 5
-      #     docker logs actix-web-server
-      # - name: API Test
-      #   run: |
-      #     make req
+      - name: Install hurl for integration test
+        run: |
+          VERSION=4.3.0
+          curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/$VERSION/hurl_${VERSION}_amd64.deb
+          sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb
+          hurl --version
+      - name: Build Docker for API server and Postgresql
+        run: |
+          make build-image
+      - name: Run Docker Postgresql first
+        run: |
+          docker compose up -d postgresql
+          sleep 20
+      - name: Run Docker Rust API Servers second
+        run: |
+          docker compose up -d actix-server
+          sleep 5
+          docker logs actix-web-server
+      - name: API Test
+        run: |
+          make req
