@@ -1,0 +1,20 @@
+app_name = "api-server"
+
+[server]
+host = "127.0.0.1"
+port = 8080
+
+[jwt]
+kind = "jsonwebtoken" # jwt-simple, jsonwebtoken, none
+duration_min = 30
+
+[logger]
+service = "api-server"
+level = "debug"        # debug, info, warn, error
+
+[db]
+enabled = true
+host = "127.0.0.1:5432"
+dbname = "example"
+user = "admin"
+password = "admin"

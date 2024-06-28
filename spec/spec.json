@@ -1,0 +1,477 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "todo management API",
+    "description": "todo management API using actix",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "/api/v3"
+    }
+  ],
+  "paths": {
+    "/api/v1/admin/login": {
+      "post": {
+        "summary": "login for admin",
+        "operationId": "post_api-v1-admin-login-666d2fd1b8ad851157aa8fc154a94169",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "summary": "get user list for admin",
+        "operationId": "get_api-v1-admin-users-725abb9432a637abb56bddbe9eb1631e",
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "add user for admin",
+        "operationId": "post_api-v1-admin-users-725abb9432a637abb56bddbe9eb1631e",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/admin/users/{user_id}": {
+      "get": {
+        "summary": "get user for admin",
+        "operationId": "get_api-v1-admin-users-479afa20500174fcc093ea0596b39503",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "summary": "update user for admin",
+        "operationId": "put_api-v1-admin-users-479afa20500174fcc093ea0596b39503",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "delete user for admin",
+        "operationId": "delete_api-v1-admin-users-479afa20500174fcc093ea0596b39503",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/api/v1": {
+      "get": {
+        "summary": "health check",
+        "operationId": "get_api-v1-api-v1-fb774b4fb79c487722a82b5e519172b1",
+        "responses": {},
+        "deprecated": false
+      }
+    },
+    "/api/v1/app/login": {
+      "post": {
+        "summary": "login for app",
+        "operationId": "post_api-v1-app-login-54473cc9c6b8ff28319a313ca40ec9c2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/app/users/{user_id}/todos": {
+      "get": {
+        "summary": "get user todo list",
+        "operationId": "get_api-v1-app-users-b01b4ac95184ab12bb7521d3291a0eb7",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "add user todo",
+        "operationId": "post_api-v1-app-users-b01b4ac95184ab12bb7521d3291a0eb7",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/app/users/{user_id}/todos/{todo_id}": {
+      "get": {
+        "summary": "get user todo",
+        "operationId": "get_api-v1-app-users-5dd7f924515348f95565b99751534e8e",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "todo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "summary": "update user todo",
+        "operationId": "put_api-v1-app-users-5dd7f924515348f95565b99751534e8e",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "todo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoUpdateBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "elete user todo",
+        "operationId": "delete_api-v1-app-users-5dd7f924515348f95565b99751534e8e",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "todo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "title": "int32",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginBody": {
+        "title": "LoginBody",
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 8
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 10
+          }
+        }
+      },
+      "TodoBody": {
+        "title": "TodoBody",
+        "type": "object",
+        "required": ["status", "title"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1
+          }
+        }
+      },
+      "TodoUpdateBody": {
+        "title": "TodoUpdateBody",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "nullable": true
+          }
+        }
+      },
+      "UserBody": {
+        "title": "UserBody",
+        "type": "object",
+        "required": [
+          "email",
+          "first_name",
+          "is_admin",
+          "last_name",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 8
+          },
+          "first_name": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1
+          },
+          "is_admin": {
+            "type": "boolean"
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 10
+          }
+        }
+      },
+      "UserUpdateBody": {
+        "title": "UserUpdateBody",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 8,
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "nullable": true
+          },
+          "is_admin": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 10,
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}

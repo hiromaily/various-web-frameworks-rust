@@ -1,0 +1,43 @@
+[package]
+name = "actix"
+version = "0.1.0"
+edition = "2021"
+
+[package.metadata.cargo-machete]
+ignored = ["apistos-models", "tokio"]
+
+[dependencies]
+# workspace
+components = { path = "../components" }
+# outer crates
+actix-cors = "0.7.0"
+actix-http = "3.8.0"
+actix-web = "4"
+actix-web-lab = "0.20"
+apistos = { version = ">=0.2.6, <0.3", features = [
+  "swagger-ui",
+  "extras",
+  "qs_query",
+  "rapidoc",
+  "redoc",
+] }
+apistos-models = "0.2"
+cfg-if = "1.0.0"
+env_logger = "0.11"
+log = { version = "0.4", features = ["std", "serde"] }
+schemars = { package = "apistos-schemars", version = "0.8" }
+sea-orm = { version = "^0.12.15", features = [
+  "sqlx-postgres",
+  "runtime-tokio-native-tls",
+  "macros",
+] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["full"] }
+validator = { version = "0.18", features = ["derive"] }
+
+[features]
+default = ["pbkdf2"]
+pbkdf2 = []
+argon2 = []
+scrypt = []

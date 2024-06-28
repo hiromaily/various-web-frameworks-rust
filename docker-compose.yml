@@ -1,0 +1,45 @@
+#version: "3.8"
+
+volumes:
+  pgdata: {}
+
+services:
+  server:
+    container_name: actix-web-server
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile_rust
+    ports:
+      - "8080:8080"
+    environment:
+      RUST_LOG: debug
+      RUST_BACKTRACE: full
+    #restart: always
+    depends_on:
+      - postgresql
+    #command: bash -c "cd /usr/local/bin && ls"
+    networks:
+      - app-network
+
+  postgresql:
+    container_name: actix-web-postgresql
+    build:
+      context: ./docker
+      dockerfile: Dockerfile_pg
+      target: "database"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: example
+      TZ: Asia/Tokyo
+    #restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

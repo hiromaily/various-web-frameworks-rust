@@ -1,0 +1,31 @@
+# The build stage
+FROM rust:1.79-slim-buster as builder
+
+RUN apt-get update -y && \
+  apt-get install -y pkg-config \
+  libssl-dev
+
+RUN USER=root cargo new --bin actix-web-server
+WORKDIR /actix-web-server
+
+COPY ./Cargo.toml ./Cargo.toml
+COPY ./config/container.toml ./container.toml
+COPY ./src ./src
+
+RUN cargo build --release
+
+
+# Stage 2: Create a lightweight image to run the application
+FROM debian:buster-slim
+#FROM scratch
+RUN apt-get update && apt install -y openssl
+
+COPY --from=builder /actix-web-server/target/release/api-server /usr/local/bin/api-server
+COPY --from=builder /actix-web-server/container.toml /container.toml
+
+# Run the application
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/api-server"]
+
+CMD ["container.toml"]
