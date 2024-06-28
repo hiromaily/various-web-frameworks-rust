@@ -4,7 +4,7 @@ volumes:
   pgdata: {}
 
 services:
-  server:
+  actix-server:
     container_name: actix-web-server
     build:
       context: .

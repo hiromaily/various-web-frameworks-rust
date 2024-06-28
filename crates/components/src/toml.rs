@@ -144,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_load_config() {
-        let conf = load_config("./config/local.toml").expect("fail to load config");
+        let conf = load_config("../../config/local.toml").expect("fail to load config");
 
         let expected_config = Config {
             app_name: "api-server".to_string(),
