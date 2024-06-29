@@ -40,7 +40,6 @@ async fn main() {
     let port = config.server.port;
     info!("run server {}:{}", host, port);
 
-    //let listener = tokio::net::TcpListener::bind("0.0.0.0:8080")
     let listener = tokio::net::TcpListener::bind(format!("{}:{}", host, port))
         .await
         .unwrap();
