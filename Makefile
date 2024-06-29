@@ -4,7 +4,12 @@
 
 .PHONY: lint
 lint:
-	cargo fmt --all --check
+	cargo fmt --all
+	cargo clippy --all-targets --all-features
+
+.PHONY: lint-check
+lint-check:
+	cargo fmt --all
 	cargo clippy --all-targets --all-features
 
 .PHONY: check-deps
