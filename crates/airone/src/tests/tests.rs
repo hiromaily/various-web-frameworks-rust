@@ -343,6 +343,7 @@ fn chaining() {
 }
 
 #[test]
+#[allow(unused_must_use)]
 fn rollback_test() {
     let _ = remove_file("rollback_test.csv");
     let _ = remove_file("rollback_test.changes.csv");
@@ -400,7 +401,7 @@ fn rollback_test() {
     db.save().unwrap();
     db.rollback();
     assert_eq!(db.len(), 5);
-    //db.drain(3..=4);
+    db.drain(3..=4);
     //let _: Vec<_> = db.drain(3..=4).unwrap().collect();
     db.save().unwrap();
 
