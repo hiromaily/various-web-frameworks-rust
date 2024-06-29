@@ -1,21 +1,21 @@
-use components::dbs::conn;
+use crate::dbs::conn;
 cfg_if! {
   if #[cfg(feature = "pbkdf2")] {
-    use components::hashes::pbkdf2;
+    use crate::hashes::pbkdf2;
   } else if #[cfg(feature = "argon2")] {
-    use components::hashes::argon2;
+    use crate::hashes::argon2;
   } else if #[cfg(feature = "scrypt")] {
-    use components::hashes::scrypt;
+    use crate::hashes::scrypt;
   } else {
     compile_error!("One of the features 'pbkdf2' or 'argon2' or 'scrypt' must be enabled");
   }
 }
+use crate::jwt;
+use crate::repositories::{todos, users};
 use crate::state;
+use crate::toml;
+use crate::usecases::{admin, app, auth};
 use cfg_if::cfg_if;
-use components::jwt;
-use components::repositories::{todos, users};
-use components::toml;
-use components::usecases::{admin, app, auth};
 use log::debug;
 use sea_orm::{DatabaseConnection, DbErr};
 use std::sync::Arc;

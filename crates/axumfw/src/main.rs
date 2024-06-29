@@ -4,9 +4,13 @@ use axum::{
     Json, Router,
 };
 use components::args;
+use components::registry;
 use components::toml;
 use log::info;
 use serde::{Deserialize, Serialize};
+
+// refer to
+// https://github.com/tokio-rs/axum/blob/main/examples/dependency-injection/src/main.rs
 
 #[tokio::main]
 async fn main() {
@@ -28,6 +32,13 @@ async fn main() {
     };
     //dbg!(&config);
 
+    // registry and get each states
+    let reg = registry::Registry::new(config).await.unwrap(); // may panic
+
+    let auth_state = reg.create_auth_state();
+    let admin_state = reg.create_admin_state();
+    let app_state = reg.create_app_state();
+
     // build our application with a route
     let app = Router::new()
         // `GET /` goes to `root`
@@ -36,8 +47,8 @@ async fn main() {
         .route("/users", post(create_user));
 
     // run our app with hyper, listening globally on port 3000
-    let host = config.server.host;
-    let port = config.server.port;
+    let host = reg.conf.server.host;
+    let port = reg.conf.server.port;
     info!("run server {}:{}", host, port);
 
     let listener = tokio::net::TcpListener::bind(format!("{}:{}", host, port))

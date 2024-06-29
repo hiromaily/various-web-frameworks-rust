@@ -1,4 +1,4 @@
-use components::usecases::{admin, app, auth};
+use crate::usecases::{admin, app, auth};
 use std::sync::Arc;
 
 pub struct GlobalState {

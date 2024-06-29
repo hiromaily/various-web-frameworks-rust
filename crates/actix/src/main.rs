@@ -6,6 +6,7 @@ use apistos::server::Server;
 use apistos::spec::Spec;
 use apistos::web; // replacement of actix_web::web
 use components::args;
+use components::registry;
 use components::toml;
 use core::time::Duration;
 use log::info;
@@ -15,7 +16,6 @@ use std::error::Error;
 
 // local
 use actix::handlers;
-use actix::registry;
 use actix::routes;
 
 #[actix_web::main]

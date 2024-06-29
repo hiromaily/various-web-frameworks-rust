@@ -1,10 +1,10 @@
 use crate::handlers::error::ErrorResponse;
-use crate::state;
 use actix_http::StatusCode;
 use actix_web::{web, HttpResponse};
 use apistos::api_operation;
 use components::entities::login::LoginResult;
 use components::entities::{todos, users};
+use components::state;
 use serde_json::json;
 use validator::Validate;
 

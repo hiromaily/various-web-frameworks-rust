@@ -1,4 +1,3 @@
-use crate::state;
 use actix_web::{
     body::MessageBody,
     dev::{ServiceRequest, ServiceResponse},
@@ -7,6 +6,7 @@ use actix_web::{
 };
 use actix_web_lab::middleware::Next;
 use components::errors::CustomError;
+use components::state;
 use log::{debug, info};
 //use std::collections::HashMap;
 
