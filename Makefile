@@ -38,7 +38,7 @@ test:
 	cargo test
 
 #------------------------------------------------------------------------------
-# execute
+# execute actix
 #------------------------------------------------------------------------------
 # hash crate is pbkdf2
 .PHONY: run
@@ -54,6 +54,13 @@ run-argon2:
 .PHONY: run-scrypt
 run-scrypt:
 	RUST_LOG=debug cargo run --package actix --no-default-features --features "scrypt" -- ./config/local.toml -d
+
+#------------------------------------------------------------------------------
+# execute axumfw
+#------------------------------------------------------------------------------
+.PHONY: run-axumfw
+run-axumfw:
+	RUST_LOG=debug cargo run --package axumfw -- ./config/local.toml -d
 
 
 #------------------------------------------------------------------------------
