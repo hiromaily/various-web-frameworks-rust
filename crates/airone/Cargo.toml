@@ -1,0 +1,17 @@
+[package]
+name = "airone"
+version = "0.8.1"
+edition = "2021"
+license = "AGPL-3.0-or-later"
+description = "A Rust library which provides a simple in-memory, write-on-update database that is persisted to an append-only transaction file"
+authors = ["Massimo Gismondi <info@massimogismondi.it>"]
+repository = "https://gitlab.com/MassiminoilTrace/airone"
+documentation = "https://massiminoiltrace.gitlab.io/airone/airone/index.html"
+keywords = ["database", "in-memory", "small-tech", "foss", "libre"]
+
+
+[dev-dependencies]
+paste="1.0"
+
+[dependencies]
+airone_derive = {version="0.8.1", path = "./airone_derive"}

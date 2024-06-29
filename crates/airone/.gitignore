@@ -1,0 +1,8 @@
+*.h
+/target
+/Cargo.lock
+.vscode/
+ttool/
+/airone_derive/target/
+*.csv
+/airone_derive/Cargo.lock

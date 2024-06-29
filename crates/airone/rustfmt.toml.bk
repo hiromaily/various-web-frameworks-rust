@@ -1,0 +1,4 @@
+# only nightly
+trailing_comma="Never"
+control_brace_style="AlwaysNextLine"
+brace_style="AlwaysNextLine"
