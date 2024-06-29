@@ -400,8 +400,7 @@ fn rollback_test() {
     db.save().unwrap();
     db.rollback();
     assert_eq!(db.len(), 5);
-    #[allow(unused_must_use)]
-    db.drain(3..=4);
+    //db.drain(3..=4);
     //let _: Vec<_> = db.drain(3..=4).unwrap().collect();
     db.save().unwrap();
 

@@ -15,7 +15,7 @@ async fn main() {
 
     // command line arguments
     let arg = args::get_args();
-    dbg!(&arg);
+    //dbg!(&arg);
 
     // load toml
     let file_path = arg.conf;
@@ -26,7 +26,7 @@ async fn main() {
             panic!("fail to load toml file [{}]: {:?}", file_path, error)
         }
     };
-    dbg!(&config);
+    //dbg!(&config);
 
     // build our application with a route
     let app = Router::new()

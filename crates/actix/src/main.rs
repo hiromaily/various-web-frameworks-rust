@@ -29,7 +29,7 @@ async fn main() -> Result<(), impl Error> {
 
     // command line arguments
     let arg = args::get_args();
-    dbg!(&arg);
+    //dbg!(&arg);
 
     // load toml
     let file_path = arg.conf;
@@ -40,7 +40,7 @@ async fn main() -> Result<(), impl Error> {
             panic!("fail to load toml file [{}]: {:?}", file_path, error)
         }
     };
-    dbg!(&config);
+    //dbg!(&config);
 
     // registry and get each states
     let reg = registry::Registry::new(config).await.unwrap(); // may panic
