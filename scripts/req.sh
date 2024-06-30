@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Deprecated
+
 # Note
 # reset database before running script
 
