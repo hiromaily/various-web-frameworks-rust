@@ -48,24 +48,24 @@ test:
 # hash crate is pbkdf2
 .PHONY: run
 run:
-	RUST_LOG=debug cargo run --package actix -- ../config/local.toml -d
+	RUST_LOG=debug cargo run --package actix -- ./config/local.toml -d
 
 # hash crate is argon2
 .PHONY: run-argon2
 run-argon2:
-	RUST_LOG=debug cargo run --package actix --no-default-features --features "argon2" -- ../config/local.toml -d
+	RUST_LOG=debug cargo run --package actix --no-default-features --features "argon2" -- ./config/local.toml -d
 
 # hash crate is scrypt
 .PHONY: run-scrypt
 run-scrypt:
-	RUST_LOG=debug cargo run --package actix --no-default-features --features "scrypt" -- ../config/local.toml -d
+	RUST_LOG=debug cargo run --package actix --no-default-features --features "scrypt" -- ./config/local.toml -d
 
 #------------------------------------------------------------------------------
 # execute axumfw
 #------------------------------------------------------------------------------
 .PHONY: run-axumfw
 run-axumfw:
-	RUST_LOG=debug cargo run --package axumfw -- ../config/local.toml -d
+	RUST_LOG=debug cargo run --package axumfw -- ./config/local.toml -d
 
 
 #------------------------------------------------------------------------------

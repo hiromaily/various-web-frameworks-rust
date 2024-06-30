@@ -15,7 +15,7 @@ use components::state;
 
 fn api_admin_login_router(state: state::AuthState) -> Router {
     Router::new()
-        .route("/login", post(handlers::basis::dummy))
+        .route("/login", post(handlers::admin::admin_login))
         .with_state(state)
     // cfg.service(
     //     web::resource("/login")

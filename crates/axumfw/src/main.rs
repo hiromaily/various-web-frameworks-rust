@@ -39,11 +39,11 @@ async fn main() {
     // get router
     let router = routes::get_router(auth_state, admin_state, app_state);
 
-    // run our app with hyper, listening globally on port 3000
     let host = reg.conf.server.host;
     let port = reg.conf.server.port;
     info!("run server {}:{}", host, port);
 
+    // run server with hyper
     let listener = tokio::net::TcpListener::bind(format!("{}:{}", host, port))
         .await
         .unwrap();

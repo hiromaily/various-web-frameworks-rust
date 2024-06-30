@@ -1,66 +1,64 @@
-// use components::entities::login::LoginResult;
-// use components::entities::users;
-// use components::state;
-// use crate::handlers::error::ErrorResponse;
-// use axum::{
-//     extract::{Path, State},
-//     http::StatusCode,
-//     routing::{get, post},
-//     Json, Router,
-// };
-// use log::info;
-// use serde_json::json;
-// use validator::Validate;
+use crate::handlers::error::AppError;
+use axum::{extract::State, Json};
+use components::entities::login::LoginResult;
+use components::entities::users;
+use components::state;
+use log::info;
+use validator::Validate;
 
 /*
  Admin
 */
 
 // [post] /login
-// pub(crate) async fn admin_login(
-//     State(auth_state): State<state::AuthState>,
-//     body: Json<users::LoginBody>,
-// ) -> Result<Json, ErrorResponse> {
-//     info!("admin_login received");
+pub(crate) async fn admin_login(
+    State(auth_state): State<state::AuthState>,
+    body: Json<users::LoginBody>,
+) -> Result<Json<LoginResult>, AppError> {
+    info!("admin_login received");
 
-//     // validation
-//     if let Err(e) = body.validate() {
-//         return HttpResponse::BadRequest().json(ErrorResponse {
-//             error: format!("request body is invalid: {:?}", e),
-//         });
-//     }
+    // validation
+    if let Err(e) = body.validate() {
+        return Err(AppError::BadRequest(format!(
+            "request body is invalid: {:?}",
+            e
+        )));
+    }
 
-//     // Extract the email and password
-//     let email = &body.email;
-//     let password = &body.password;
+    // Extract the email and password
+    let email = &body.email;
+    let password = &body.password;
 
-//     // authentication usecase
-//     match auth_state.auth_usecase.login_admin(email, password).await {
-//         Ok(Some(user)) => {
-//             // return access key
-//             match auth_state.auth_usecase.generate_token(
-//                 user.id,
-//                 user.email.as_str(),
-//                 user.is_admin,
-//             ) {
-//                 Ok(token) => HttpResponse::Ok().json(LoginResult {
-//                     message: "Login successful".into(),
-//                     token: Some(token),
-//                 }),
-//                 Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-//                     error: format!("Fatal error: {:?}", e),
-//                 }),
-//             }
-//         }
-//         Ok(None) => HttpResponse::Unauthorized().json(LoginResult {
-//             message: "user is not found".into(),
-//             token: None,
-//         }),
-//         Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-//             error: format!("Fatal error: {:?}", e),
-//         }),
-//     }
-// }
+    // authentication usecase
+    match auth_state.auth_usecase.login_admin(email, password).await {
+        Ok(Some(user)) => {
+            // return access key
+            match auth_state.auth_usecase.generate_token(
+                user.id,
+                user.email.as_str(),
+                user.is_admin,
+            ) {
+                Ok(token) => Ok(Json(LoginResult {
+                    message: "Login successful".into(),
+                    token: Some(token),
+                })),
+                Err(e) => Err(AppError::InternalServerError(format!(
+                    "Fatal error: {:?}",
+                    e
+                ))),
+            }
+        }
+        // Ok(None) => HttpResponse::Unauthorized().json(LoginResult {
+        //     message: "user is not found".into(),
+        //     token: None,
+        // }),
+        Ok(None) => Err(AppError::Unauthorized("user is not found".into())),
+        Err(e) => Err(AppError::InternalServerError(format!(
+            "Fatal error: {:?}",
+            e
+        ))),
+    }
+}
 
 // [get] /users
 // #[api_operation(summary = "get user list for admin")]
