@@ -4,7 +4,6 @@ use components::entities::login::LoginResult;
 use components::entities::users;
 use components::schemas::users as db_users;
 use components::state;
-use log::info;
 use validator::Validate;
 
 /*
@@ -16,8 +15,6 @@ pub(crate) async fn admin_login(
     State(auth_state): State<state::AuthState>,
     body: Json<users::LoginBody>,
 ) -> Result<Json<LoginResult>, AppError> {
-    info!("admin_login received");
-
     // validation
     if let Err(e) = body.validate() {
         return Err(AppError::BadRequest(format!(

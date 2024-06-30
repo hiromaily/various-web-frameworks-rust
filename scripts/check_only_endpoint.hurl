@@ -42,7 +42,7 @@ Content-Type: application/json
 HTTP 200
 
 DELETE http://127.0.0.1:8080/api/v1/admin/users/1
-HTTP 200
+HTTP 204
 
 
 #------------------------------------------------------------------------------
@@ -82,4 +82,4 @@ Content-Type: application/json
 HTTP 200
 
 DELETE http://127.0.0.1:8080/api/v1/app/users/1/todos/1
-HTTP 200
+HTTP 204

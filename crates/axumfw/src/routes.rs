@@ -72,7 +72,7 @@ fn api_admin_router(auth_state: state::AuthState, admin_state: state::AdminState
 
 fn api_app_login_router(state: state::AuthState) -> Router {
     Router::new()
-        .route("/login", post(handlers::basis::dummy))
+        .route("/login", post(handlers::app::app_login))
         .with_state(state)
     // cfg.service(
     //     web::resource("/login")
@@ -83,8 +83,11 @@ fn api_app_login_router(state: state::AuthState) -> Router {
 
 fn api_app_users_todo_router(state: state::AppState) -> Router {
     Router::new()
-        .route("/users/:user_id/todos", get(handlers::basis::dummy))
-        .route("/users/:user_id/todos", post(handlers::basis::dummy))
+        .route(
+            "/users/:user_id/todos",
+            get(handlers::app::get_user_todo_list),
+        )
+        .route("/users/:user_id/todos", post(handlers::app::add_user_todo))
         .with_state(state)
     // cfg.service(
     //     web::resource("/users/{user_id}/todos")
@@ -98,15 +101,15 @@ fn api_app_users_todo_id_router(state: state::AppState) -> Router {
     Router::new()
         .route(
             "/users/:user_id/todos/:todo_id",
-            get(handlers::basis::dummy),
+            get(handlers::app::get_user_todo),
         )
         .route(
             "/users/:user_id/todos/:todo_id",
-            put(handlers::basis::dummy),
+            put(handlers::app::update_user_todo),
         )
         .route(
             "/users/:user_id/todos/:todo_id",
-            delete(handlers::basis::dummy),
+            delete(handlers::app::delete_user_todo),
         )
         .with_state(state)
     // cfg.service(
