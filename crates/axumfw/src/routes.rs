@@ -27,8 +27,8 @@ fn api_admin_login_router(state: state::AuthState) -> Router {
 // Note: In this case, middleware is configured per config
 fn api_admin_users_router(state: state::AdminState) -> Router {
     Router::new()
-        .route("/users", get(handlers::basis::dummy))
-        .route("/users", post(handlers::basis::dummy))
+        .route("/users", get(handlers::admin::get_user_list))
+        .route("/users", post(handlers::admin::add_user))
         .with_state(state)
     // cfg.service(
     //     web::resource("/users")
@@ -41,9 +41,9 @@ fn api_admin_users_router(state: state::AdminState) -> Router {
 // Note: In this case, middleware is configured per config
 fn api_admin_users_id_router(state: state::AdminState) -> Router {
     Router::new()
-        .route("/users/:user_id", get(handlers::basis::dummy))
-        .route("/users/:user_id", put(handlers::basis::dummy))
-        .route("/users/:user_id", delete(handlers::basis::dummy))
+        .route("/users/:user_id", get(handlers::admin::get_user))
+        .route("/users/:user_id", put(handlers::admin::update_user))
+        .route("/users/:user_id", delete(handlers::admin::delete_user))
         .with_state(state)
     // cfg.service(
     //     web::resource("/users/{user_id}")

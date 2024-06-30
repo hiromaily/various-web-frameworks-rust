@@ -1,7 +1,8 @@
 use crate::handlers::error::AppError;
-use axum::{extract::State, Json};
+use axum::{extract::Path, extract::State, http::StatusCode, Json};
 use components::entities::login::LoginResult;
 use components::entities::users;
+use components::schemas::users as db_users;
 use components::state;
 use log::info;
 use validator::Validate;
@@ -61,117 +62,107 @@ pub(crate) async fn admin_login(
 }
 
 // [get] /users
-// #[api_operation(summary = "get user list for admin")]
-// pub(crate) async fn get_user_list(admin_data: web::Data<state::AdminState>) -> HttpResponse {
-//     // usecase
-//     match admin_data.admin_usecase.get_user_list().await {
-//         Ok(user_list) => HttpResponse::Ok().json(user_list),
-//         Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-//             error: format!("Fatal error: {:?}", e),
-//         }),
-//     }
-// }
+pub(crate) async fn get_user_list(
+    State(admin_state): State<state::AdminState>,
+) -> Result<Json<Vec<db_users::Model>>, AppError> {
+    // usecase
+    match admin_state.admin_usecase.get_user_list().await {
+        Ok(user_list) => Ok(Json(user_list)),
+        Err(e) => Err(AppError::InternalServerError(format!(
+            "Fatal error: {:?}",
+            e
+        ))),
+    }
+}
 
 // [post] /users
-// #[api_operation(summary = "add user for admin")]
-// pub async fn add_user(
-//     admin_data: web::Data<state::AdminState>,
-//     body: web::Json<users::UserBody>,
-// ) -> HttpResponse {
-//     // validation
-//     if let Err(e) = body.validate() {
-//         return HttpResponse::BadRequest().json(ErrorResponse {
-//             error: format!("request body is invalid: {:?}", e),
-//         });
-//     }
-//     let user_body: users::UserBody = body.into_inner();
+pub async fn add_user(
+    State(admin_state): State<state::AdminState>,
+    Json(body): Json<users::UserBody>,
+) -> Result<Json<db_users::Model>, AppError> {
+    // validation
+    if let Err(e) = body.validate() {
+        return Err(AppError::BadRequest(format!(
+            "request body is invalid: {:?}",
+            e
+        )));
+    }
 
-//     // usecase
-//     match admin_data.admin_usecase.add_user(user_body).await {
-//         Ok(user) => HttpResponse::Ok().json(user),
-//         Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-//             error: format!("Fatal error: {:?}", e),
-//         }),
-//     }
-// }
+    // usecase
+    match admin_state.admin_usecase.add_user(body).await {
+        Ok(user) => Ok(Json(user)),
+        Err(e) => Err(AppError::InternalServerError(format!(
+            "Fatal error: {:?}",
+            e
+        ))),
+    }
+}
 
 // [get] "/users/{user_id}"
-// #[api_operation(summary = "get user for admin")]
-// pub async fn get_user(
-//     admin_data: web::Data<state::AdminState>,
-//     path: web::Path<i32>,
-// ) -> HttpResponse {
-//     let user_id = path.into_inner();
-
-//     // usecase
-//     let res = admin_data.admin_usecase.get_user(user_id).await;
-//     // response
-//     // if let Some(user) = res {
-//     //     HttpResponse::Ok().json(user)
-//     // }
-//     match res {
-//         Ok(Some(user)) => HttpResponse::Ok().json(user),
-//         Ok(None) => HttpResponse::NotFound().json(ErrorResponse {
-//             error: format!("User with ID {} not found", user_id),
-//         }),
-//         Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-//             error: format!("Fatal error: {:?}", e),
-//         }),
-//     }
-// }
+pub async fn get_user(
+    State(admin_state): State<state::AdminState>,
+    Path(user_id): Path<i32>,
+) -> Result<Json<db_users::Model>, AppError> {
+    // usecase
+    let res = admin_state.admin_usecase.get_user(user_id).await;
+    match res {
+        Ok(Some(user)) => Ok(Json(user)),
+        // Ok(None) => HttpResponse::NotFound().json(ErrorResponse {
+        //     error: format!("User with ID {} not found", user_id),
+        // }),
+        Ok(None) => Err(AppError::NotFound(format!(
+            "User with ID {} not found",
+            user_id
+        ))),
+        Err(e) => Err(AppError::InternalServerError(format!(
+            "Fatal error: {:?}",
+            e
+        ))),
+    }
+}
 
 // [put] "/users/{user_id}"
-// #[api_operation(summary = "update user for admin")]
-// pub async fn update_user(
-//     admin_data: web::Data<state::AdminState>,
-//     path: web::Path<i32>,
-//     body: web::Json<users::UserUpdateBody>,
-// ) -> HttpResponse {
-//     let user_id = path.into_inner();
+pub async fn update_user(
+    State(admin_state): State<state::AdminState>,
+    Path(user_id): Path<i32>,
+    Json(body): Json<users::UserUpdateBody>,
+) -> Result<Json<db_users::Model>, AppError> {
+    // validate
+    if let Err(e) = body.validate() {
+        return Err(AppError::BadRequest(format!(
+            "request body is invalid: {:?}",
+            e
+        )));
+    }
 
-//     // validate
-//     if let Err(e) = body.validate() {
-//         return HttpResponse::BadRequest().json(ErrorResponse {
-//             error: format!("request body is invalid: {:?}", e),
-//         });
-//     }
-//     let user_body: users::UserUpdateBody = body.into_inner();
-
-//     // usecase
-//     match admin_data
-//         .admin_usecase
-//         .update_user(user_id, user_body)
-//         .await
-//     {
-//         Ok(Some(user)) => HttpResponse::Ok().json(user),
-//         Ok(None) => HttpResponse::NotFound().json(ErrorResponse {
-//             error: format!("User with ID {} not found", user_id),
-//         }),
-//         Err(e) => {
-//             HttpResponse::BadRequest().json(json!({ "status": "error", "message": e.to_string() }))
-//         }
-//     }
-// }
+    // usecase
+    match admin_state.admin_usecase.update_user(user_id, body).await {
+        Ok(Some(user)) => Ok(Json(user)),
+        Ok(None) => Err(AppError::NotFound(format!(
+            "User with ID {} not found",
+            user_id
+        ))),
+        Err(e) => Err(AppError::BadRequest(format!(
+            "request body is invalid: {:?}",
+            e
+        ))),
+    }
+}
 
 // [delete] "/users/{user_id}"
-// #[api_operation(summary = "delete user for admin")]
-// pub async fn delete_user(
-//     admin_data: web::Data<state::AdminState>,
-//     path: web::Path<i32>,
-// ) -> HttpResponse {
-//     let user_id = path.into_inner();
-//     // let app_name = &data.app_name;
-//     // HttpResponse::Ok().body(format!("[delete_user] Hello {app_name}:{user_id}!"))
-//     match admin_data.admin_usecase.delete_user(user_id).await {
-//         Ok(0) => HttpResponse::NotFound().json(ErrorResponse {
-//             error: format!("User with ID {} not found", user_id),
-//         }),
-//         Ok(_) => {
-//             //HttpResponse::Ok().json(json!({ "status": "success", "message": "Delete successful" }))
-//             HttpResponse::new(StatusCode::NO_CONTENT)
-//         }
-//         Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-//             error: format!("Fatal error: {:?}", e),
-//         }),
-//     }
-// }
+pub async fn delete_user(
+    State(admin_state): State<state::AdminState>,
+    Path(user_id): Path<i32>,
+) -> Result<StatusCode, AppError> {
+    match admin_state.admin_usecase.delete_user(user_id).await {
+        Ok(0) => Err(AppError::NotFound(format!(
+            "User with ID {} not found",
+            user_id
+        ))),
+        Ok(_) => Ok(StatusCode::NO_CONTENT),
+        Err(e) => Err(AppError::InternalServerError(format!(
+            "Fatal error: {:?}",
+            e
+        ))),
+    }
+}
