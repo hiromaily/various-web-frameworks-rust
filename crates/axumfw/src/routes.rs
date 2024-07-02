@@ -1,9 +1,16 @@
 use crate::handlers;
+use crate::middlewares::auth_jwt;
 use axum::{
     routing::{delete, get, post, put},
     Router,
 };
 use components::state;
+use tower::ServiceBuilder;
+use tower_http::{add_extension::AddExtensionLayer, trace::TraceLayer};
+
+// middleware
+// refar to: https://github.com/bsodmike/axum-rest-starter-example/blob/f019297e36c5195fc476d0576c7ed39abb5dd46f/app/src/main.rs#L148
+//           https://github.com/tokio-rs/axum/blob/axum-v0.7.5/examples/consume-body-in-extractor-or-middleware/src/main.rs
 
 // [Path] /api/v1/admin
 // - admin login: [POST] `/admin/login`
@@ -26,10 +33,16 @@ fn api_admin_login_router(state: state::AuthState) -> Router {
 
 // Note: In this case, middleware is configured per config
 fn api_admin_users_router(state: state::AdminState) -> Router {
+    let middleware = ServiceBuilder::new()
+        .layer(TraceLayer::new_for_http())
+        .layer(AddExtensionLayer::new(state.clone()))
+        .layer(axum::middleware::from_fn(auth_jwt::print_request_body));
+
     Router::new()
         .route("/users", get(handlers::admin::get_user_list))
         .route("/users", post(handlers::admin::add_user))
         .with_state(state)
+        .layer(middleware)
     // cfg.service(
     //     web::resource("/users")
     //         .route(web::get().to(handlers::admin::get_user_list))
