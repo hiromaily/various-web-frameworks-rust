@@ -1,30 +1,44 @@
-use axum::{extract::Request, middleware::Next, response::IntoResponse, response::Response};
+use axum::{
+    extract::{Request, State}, //Query
+    http::StatusCode,
+    middleware::Next,
+    response::Response,
+};
+use components::state;
+use log::debug;
 
-// WIP
-// async fn mw_admin_auth_jwt<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
-//     next.run(req).await
-//     // let token = match req.headers().get("Authorization") {
-//     //     Some(header_value) => header_value.to_str().ok(),
-//     //     None => None,
-//     // };
-
-//     // if let Some(token) = token {
-//     //     match validate_token(token) {
-//     //         Ok(claims) => {
-//     //             // Attach claims to request extensions if needed
-//     //             // req.extensions_mut().insert(claims);
-//     //             next.run(req).await
-//     //         }
-//     //         Err(_) => (StatusCode::UNAUTHORIZED, "Invalid token").into_response(),
-//     //     }
-//     // } else {
-//     //     (StatusCode::UNAUTHORIZED, "Authorization token missing").into_response()
-//     // }
-// }
-
-pub async fn print_request_body(
-    request: Request,
+pub async fn mw_admin_auth_jwt(
+    State(auth_state): State<state::AuthState>,
+    req: Request,
     next: Next,
-) -> Result<impl IntoResponse, Response> {
-    Ok(next.run(request).await)
+) -> Result<Response, StatusCode> {
+    debug!("mw_admin_auth_jwt is called");
+
+    if !auth_state.auth_usecase.is_jwt_disable() {
+        // retrieve token from request
+        let headers = req.headers();
+
+        let token = match headers.get("authorization") {
+            Some(value) => value.to_str().unwrap().strip_prefix("Bearer ").unwrap(),
+            None => return Err(StatusCode::UNAUTHORIZED),
+        };
+        debug!("token: {}", token);
+
+        // is_admin must be true
+        match auth_state.auth_usecase.validate_token(token) {
+            Ok(payload) => {
+                // admin only
+                if !payload.is_admin {
+                    return Err(StatusCode::UNAUTHORIZED);
+                    // return 401
+                }
+            }
+            Err(e) => {
+                debug!("token in invalid: {}", e);
+                return Err(StatusCode::UNAUTHORIZED); // return 401
+            }
+        };
+    }
+
+    Ok(next.run(req).await)
 }

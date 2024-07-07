@@ -5,12 +5,12 @@ use axum::{
     Router,
 };
 use components::state;
-use tower::ServiceBuilder;
-use tower_http::{add_extension::AddExtensionLayer, trace::TraceLayer};
+//use tower::ServiceBuilder;
+//use tower_http::{add_extension::AddExtensionLayer, trace::TraceLayer};
 
-// middleware
-// refar to: https://github.com/bsodmike/axum-rest-starter-example/blob/f019297e36c5195fc476d0576c7ed39abb5dd46f/app/src/main.rs#L148
-//           https://github.com/tokio-rs/axum/blob/axum-v0.7.5/examples/consume-body-in-extractor-or-middleware/src/main.rs
+//.layer(TraceLayer::new_for_http())
+//.layer(AddExtensionLayer::new(state.clone()))
+//.layer(axum::middleware::from_fn(auth_jwt::print_request_body));
 
 // [Path] /api/v1/admin
 // - admin login: [POST] `/admin/login`
@@ -32,17 +32,15 @@ fn api_admin_login_router(state: state::AuthState) -> Router {
 }
 
 // Note: In this case, middleware is configured per config
-fn api_admin_users_router(state: state::AdminState) -> Router {
-    let middleware = ServiceBuilder::new()
-        .layer(TraceLayer::new_for_http())
-        .layer(AddExtensionLayer::new(state.clone()))
-        .layer(axum::middleware::from_fn(auth_jwt::print_request_body));
-
+fn api_admin_users_router(auth_state: state::AuthState, admin_state: state::AdminState) -> Router {
     Router::new()
         .route("/users", get(handlers::admin::get_user_list))
         .route("/users", post(handlers::admin::add_user))
-        .with_state(state)
-        .layer(middleware)
+        .layer(axum::middleware::from_fn_with_state(
+            auth_state.clone(),
+            auth_jwt::mw_admin_auth_jwt,
+        ))
+        .with_state(admin_state)
     // cfg.service(
     //     web::resource("/users")
     //         .route(web::get().to(handlers::admin::get_user_list))
@@ -52,12 +50,19 @@ fn api_admin_users_router(state: state::AdminState) -> Router {
 }
 
 // Note: In this case, middleware is configured per config
-fn api_admin_users_id_router(state: state::AdminState) -> Router {
+fn api_admin_users_id_router(
+    auth_state: state::AuthState,
+    admin_state: state::AdminState,
+) -> Router {
     Router::new()
         .route("/users/:user_id", get(handlers::admin::get_user))
         .route("/users/:user_id", put(handlers::admin::update_user))
         .route("/users/:user_id", delete(handlers::admin::delete_user))
-        .with_state(state)
+        .layer(axum::middleware::from_fn_with_state(
+            auth_state.clone(),
+            auth_jwt::mw_admin_auth_jwt,
+        ))
+        .with_state(admin_state)
     // cfg.service(
     //     web::resource("/users/{user_id}")
     //         .route(web::get().to(handlers::admin::get_user))
@@ -69,9 +74,15 @@ fn api_admin_users_id_router(state: state::AdminState) -> Router {
 
 fn api_admin_router(auth_state: state::AuthState, admin_state: state::AdminState) -> Router {
     let internal = Router::new()
-        .merge(api_admin_login_router(auth_state))
-        .merge(api_admin_users_router(admin_state.clone()))
-        .merge(api_admin_users_id_router(admin_state.clone()));
+        .merge(api_admin_login_router(auth_state.clone()))
+        .merge(api_admin_users_router(
+            auth_state.clone(),
+            admin_state.clone(),
+        ))
+        .merge(api_admin_users_id_router(
+            auth_state.clone(),
+            admin_state.clone(),
+        ));
 
     Router::new().nest("/admin", internal)
 }
