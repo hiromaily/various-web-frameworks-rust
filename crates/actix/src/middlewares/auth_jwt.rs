@@ -5,6 +5,7 @@ use actix_web::{
     web, Error as ActixErr,
 };
 use actix_web_lab::middleware::Next;
+use components::entities::users;
 use components::errors::CustomError;
 use components::state;
 use log::{debug, info};
@@ -80,7 +81,7 @@ pub async fn mw_app_auth_jwt(
         //     Ok(user_id) => user_id,
         //     Err(_) => 0,
         // };
-        let user_id = extract_user_id(req.path()).unwrap_or(0);
+        let user_id = users::extract_user_id(req.path()).unwrap_or(0);
         debug!("user_id: {}", user_id);
 
         match auth_data.auth_usecase.validate_token(token) {
@@ -100,26 +101,4 @@ pub async fn mw_app_auth_jwt(
     // pre-processing
     next.call(req).await
     // post-processing
-}
-
-// extract user_id from request path
-fn extract_user_id(path: &str) -> Result<i32, String> {
-    let segments: Vec<&str> = path.split('/').collect();
-
-    if let Some(pos) = segments.iter().position(|&s| s == "users") {
-        // there is a segment after "users" for the user_id
-        if pos + 1 < segments.len() {
-            let user_id_str = segments[pos + 1];
-
-            // parse the user_id into an integer
-            match user_id_str.parse::<i32>() {
-                Ok(user_id) => Ok(user_id),
-                Err(_) => Err("Invalid user ID format".into()),
-            }
-        } else {
-            Err("User ID not found in the path".into())
-        }
-    } else {
-        Err("Path does not contain 'users' segment".into())
-    }
 }
