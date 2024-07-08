@@ -17,6 +17,15 @@ This is composed of various web frameworks such as [actix-web](https://actix.rs/
 | axum       | bin  | [WIP] axum web framework                           |
 | components | lib  | framework common packages depended from bin crates |
 
+## TODO
+
+### axum
+
+- [x] middleware implementation
+- [ ] when body is blank, request doesn't reach to handler though middleware passed.
+  - It happens on test `./scripts/admin.hurl:101:6`, 415 returns thought 400 expected
+- [ ] open api spec generation from code
+
 ## References
 
 - [Web Framework Benchmarks](https://www.techempower.com/benchmarks/#hw=ph&test=fortune&section=data-r22)
