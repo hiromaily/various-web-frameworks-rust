@@ -37,7 +37,7 @@ async fn main() {
     let app_state = reg.create_app_state();
 
     // get router
-    let router = routes::get_router(auth_state, admin_state, app_state);
+    let router = routes::get_api_router(auth_state, admin_state, app_state);
 
     let host = reg.conf.server.host;
     let port = reg.conf.server.port;

@@ -158,15 +158,25 @@ fn health_router() -> Router {
     Router::new().route("/health", get(handlers::basis::health))
 }
 
-pub fn get_router(
+// for dummy before implementation
+fn openapi_router() -> Router {
+    Router::new().route("/openapi.json", get(handlers::basis::dummy))
+}
+
+pub fn get_api_router(
     auth_state: state::AuthState,
     admin_state: state::AdminState,
     app_state: state::AppState,
 ) -> Router {
-    let internal = Router::new()
+    let api_internal = Router::new()
         .merge(health_router())
+        //.merge(openapi_router())
         .merge(api_admin_router(auth_state.clone(), admin_state))
         .merge(api_app_router(auth_state.clone(), app_state.clone()));
 
-    Router::new().nest("/api/v1", internal)
+    //Router::new().nest("/api/v1", api_internal)
+
+    // temporary
+    let api_router = Router::new().nest("/api/v1", api_internal);
+    Router::new().merge(openapi_router()).merge(api_router)
 }
