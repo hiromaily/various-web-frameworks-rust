@@ -96,8 +96,11 @@ HTTP 401
 
 
 # update user without body
+# 415 returns when axum withoug Content-type
 PUT http://127.0.0.1:8080/api/v1/admin/users/{{userid}}
 Authorization: Bearer {{token}}
+Content-Type: application/json
+#HTTP {{invalid_body_status}} # variable can't use at http status
 HTTP 400
 
 
