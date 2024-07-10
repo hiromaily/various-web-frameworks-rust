@@ -66,3 +66,6 @@ jobs:
           docker compose up -d axum-server
           sleep 5
           docker logs axum-web-server
+      - name: Axum API Test
+        run: |
+          make req

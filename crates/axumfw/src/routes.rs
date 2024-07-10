@@ -105,14 +105,18 @@ fn api_app_login_router(state: state::AuthState) -> Router {
     // );
 }
 
-fn api_app_users_todo_router(state: state::AppState) -> Router {
+fn api_app_users_todo_router(auth_state: state::AuthState, app_state: state::AppState) -> Router {
     Router::new()
         .route(
             "/users/:user_id/todos",
             get(handlers::app::get_user_todo_list),
         )
         .route("/users/:user_id/todos", post(handlers::app::add_user_todo))
-        .with_state(state)
+        .layer(axum::middleware::from_fn_with_state(
+            auth_state.clone(),
+            auth_jwt::mw_app_auth_jwt,
+        ))
+        .with_state(app_state)
     // cfg.service(
     //     web::resource("/users/{user_id}/todos")
     //         .route(web::get().to(handlers::app::get_user_todo_list))
@@ -121,7 +125,10 @@ fn api_app_users_todo_router(state: state::AppState) -> Router {
     // );
 }
 
-fn api_app_users_todo_id_router(state: state::AppState) -> Router {
+fn api_app_users_todo_id_router(
+    auth_state: state::AuthState,
+    app_state: state::AppState,
+) -> Router {
     Router::new()
         .route(
             "/users/:user_id/todos/:todo_id",
@@ -135,7 +142,11 @@ fn api_app_users_todo_id_router(state: state::AppState) -> Router {
             "/users/:user_id/todos/:todo_id",
             delete(handlers::app::delete_user_todo),
         )
-        .with_state(state)
+        .layer(axum::middleware::from_fn_with_state(
+            auth_state.clone(),
+            auth_jwt::mw_app_todo_id_auth_jwt,
+        ))
+        .with_state(app_state)
     // cfg.service(
     //     web::resource("/users/{user_id}/todos/{todo_id}")
     //         .route(web::get().to(handlers::app::get_user_todo))
@@ -147,9 +158,15 @@ fn api_app_users_todo_id_router(state: state::AppState) -> Router {
 
 fn api_app_router(auth_state: state::AuthState, app_state: state::AppState) -> Router {
     let internal = Router::new()
-        .merge(api_app_login_router(auth_state))
-        .merge(api_app_users_todo_router(app_state.clone()))
-        .merge(api_app_users_todo_id_router(app_state.clone()));
+        .merge(api_app_login_router(auth_state.clone()))
+        .merge(api_app_users_todo_router(
+            auth_state.clone(),
+            app_state.clone(),
+        ))
+        .merge(api_app_users_todo_id_router(
+            auth_state.clone(),
+            app_state.clone(),
+        ));
 
     Router::new().nest("/app", internal)
 }

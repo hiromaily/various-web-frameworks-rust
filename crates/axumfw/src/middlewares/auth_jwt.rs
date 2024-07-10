@@ -51,6 +51,28 @@ pub async fn mw_app_auth_jwt(
 ) -> Result<Response, StatusCode> {
     debug!("mw_app_auth_jwt is called");
 
+    mw_app_base_auth_jwt(auth_state, req, next, user_id).await
+}
+
+pub async fn mw_app_todo_id_auth_jwt(
+    State(auth_state): State<state::AuthState>,
+    Path((user_id, _todo_id)): Path<(i32, i32)>,
+    req: Request,
+    next: Next,
+) -> Result<Response, StatusCode> {
+    debug!("mw_app_todo_id_auth_jwt is called");
+
+    mw_app_base_auth_jwt(auth_state, req, next, user_id).await
+}
+
+async fn mw_app_base_auth_jwt(
+    auth_state: state::AuthState,
+    req: Request,
+    next: Next,
+    user_id: i32,
+) -> Result<Response, StatusCode> {
+    debug!("mw_app_base_auth_jwt is called");
+
     if !auth_state.auth_usecase.is_jwt_disable() {
         // retrieve token from request
         let headers = req.headers();

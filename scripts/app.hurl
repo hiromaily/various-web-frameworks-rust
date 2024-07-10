@@ -108,10 +108,11 @@ HTTP 401
 
 
 # update todo without body
+# 415 returns when axum withoug Content-type
 PUT http://127.0.0.1:8080/api/v1/app/users/{{userid}}/todos/{{todoid}}
 Authorization: Bearer {{token}}
+Content-Type: application/json
 HTTP 400
-
 
 # update todo
 PUT http://127.0.0.1:8080/api/v1/app/users/{{userid}}/todos/{{todoid}}

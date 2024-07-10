@@ -143,14 +143,8 @@ reset-db:
 #------------------------------------------------------------------------------
 .PHONY: req
 req:
-	hurl --variable invalid_body_status=400 --very-verbose ./scripts/admin.hurl
+	hurl --very-verbose ./scripts/admin.hurl
 	hurl --very-verbose ./scripts/app.hurl
-
-.PHONY: req-axum
-req-axum:
-	hurl --variable invalid_body_status=422 --very-verbose ./scripts/admin.hurl
-	hurl --very-verbose ./scripts/app.hurl
-
 
 # .PHONY: req-sh
 # req-sh:
