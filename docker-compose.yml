@@ -18,6 +18,25 @@ services:
     depends_on:
       - postgresql
     #command: bash -c "cd /usr/local/bin && ls"
+    command: "/usr/local/bin/actix container.toml"
+    networks:
+      - app-network
+
+  axum-server:
+    container_name: axum-web-server
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile_rust
+    ports:
+      - "8080:8080"
+    environment:
+      RUST_LOG: debug
+      RUST_BACKTRACE: full
+    #restart: always
+    depends_on:
+      - postgresql
+    #command: bash -c "cd /usr/local/bin && ls"
+    command: "/usr/local/bin/axumfw container.toml"
     networks:
       - app-network
 

@@ -24,11 +24,11 @@ FROM debian:buster-slim
 RUN apt-get update && apt install -y openssl
 
 COPY --from=builder /workspace/target/release/actix /usr/local/bin/actix
+COPY --from=builder /workspace/target/release/axumfw /usr/local/bin/axumfw
 COPY --from=builder /workspace/container.toml /container.toml
 
 # Run the application
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/actix"]
-
-CMD ["container.toml"]
+# ENTRYPOINT ["/usr/local/bin/actix"]
+# CMD ["container.toml"]
