@@ -25,6 +25,7 @@ This is composed of various web frameworks such as [actix-web](https://actix.rs/
 - [x] when body is blank, request doesn't reach to handler though middleware passed.
   - It happens on test `./scripts/admin.hurl:101:6`, 415 returns thought 400 expected
 - [ ] open api spec generation from code
+  - [aide](https://crates.io/crates/aide) looks good!
 
 ## References
 
