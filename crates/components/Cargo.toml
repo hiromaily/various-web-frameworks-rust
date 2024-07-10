@@ -8,14 +8,14 @@ ignored = ["apistos-models"]
 
 [dependencies]
 anyhow = "1.0"
-apistos = { version = ">=0.2.6, <0.3", features = [
+apistos = { version = "0.3", features = [
   "swagger-ui",
   "extras",
   "qs_query",
   "rapidoc",
   "redoc",
 ] }
-apistos-models = "0.2"
+apistos-models = "0.3"
 argon2 = "0.5"
 async-trait = "0.1"
 base64 = "0.22"

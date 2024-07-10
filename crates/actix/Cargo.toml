@@ -14,14 +14,14 @@ actix-cors = "0.7.0"
 actix-http = "3.8.0"
 actix-web = "4"
 actix-web-lab = "0.20"
-apistos = { version = ">=0.2.6, <0.3", features = [
+apistos = { version = "0.3", features = [
   "swagger-ui",
   "extras",
   "qs_query",
   "rapidoc",
   "redoc",
 ] }
-apistos-models = "0.2"
+apistos-models = "0.3"
 cfg-if = "1.0.0"
 env_logger = "0.11"
 log = { version = "0.4", features = ["std", "serde"] }
