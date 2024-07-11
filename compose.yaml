@@ -58,8 +58,8 @@ services:
       TZ: Asia/Tokyo
     #restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user"]
-      interval: 3s
+      test: ["CMD-SHELL", "pg_isready -d example -U admin"]
+      interval: 5s
       timeout: 10s
       retries: 10
     networks:

@@ -41,13 +41,9 @@ jobs:
       - name: Build Docker for API server and Postgresql
         run: |
           make build-image
-      - name: Run Postgresql container
+      - name: Run Postgresql and Actix API Servers container
         run: |
-          docker compose up -d postgresql
-          sleep 10
-      - name: Run Actix API Servers
-        run: |
-          docker compose up -d actix-server
+          docker compose up -d postgresql actix-server
           sleep 5
           docker logs actix-web-server
       - name: Actix API Test
@@ -55,15 +51,13 @@ jobs:
           make req
       - name: Reset containers
         run: |
-          docker rm -f $(docker ps -a --format "{{.Names}}")
-          sleep 1
           docker compose down -v
           sleep 1
-          docker compose up -d postgresql
-          sleep 5
+          # docker rm -f $(docker ps -a --format "{{.Names}}")
+          # sleep 1
       - name: Run Axum API Servers
         run: |
-          docker compose up -d axum-server
+          docker compose up -d postgresql axum-server
           sleep 5
           docker logs axum-web-server
       - name: Axum API Test
