@@ -1,8 +1,7 @@
-#version: "3.8"
-
 volumes:
   pgdata: {}
 
+name: web-fw
 services:
   actix-server:
     container_name: actix-web-server
@@ -16,7 +15,8 @@ services:
       RUST_BACKTRACE: full
     #restart: always
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
     #command: bash -c "cd /usr/local/bin && ls"
     command: "/usr/local/bin/actix container.toml"
     networks:
@@ -34,14 +34,15 @@ services:
       RUST_BACKTRACE: full
     #restart: always
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
     #command: bash -c "cd /usr/local/bin && ls"
     command: "/usr/local/bin/axumfw container.toml"
     networks:
       - app-network
 
   postgresql:
-    container_name: actix-web-postgresql
+    container_name: webfw-postgresql
     build:
       context: ./docker
       dockerfile: Dockerfile_pg
@@ -56,6 +57,11 @@ services:
       POSTGRES_DB: example
       TZ: Asia/Tokyo
     #restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 3s
+      timeout: 10s
+      retries: 10
     networks:
       - app-network
 
