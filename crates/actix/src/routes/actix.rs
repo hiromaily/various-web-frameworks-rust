@@ -2,7 +2,6 @@ use crate::handlers;
 use crate::middlewares::auth_jwt;
 use actix_web::{web, HttpResponse};
 use actix_web_lab::middleware::from_fn;
-use apistos::web as apiweb;
 
 // [Path] /api/v1/admin
 // - admin login: [POST] `/admin/login`
@@ -42,39 +41,6 @@ pub fn api_admin_users_id_config(cfg: &mut web::ServiceConfig) {
     );
 }
 
-/*
- apistos version
-*/
-
-pub fn api_admin_login_config_apistos(cfg: &mut apiweb::ServiceConfig) {
-    cfg.service(
-        apiweb::resource("/login")
-            //.route(apiweb::get().to(HttpResponse::MethodNotAllowed))
-            .route(apiweb::post().to(handlers::admin::admin_login)),
-    );
-}
-
-// Note: In this case, middleware is configured per config
-pub fn api_admin_users_config_apistos(cfg: &mut apiweb::ServiceConfig) {
-    cfg.service(
-        apiweb::resource("/users")
-            .route(apiweb::get().to(handlers::admin::get_user_list))
-            .route(apiweb::post().to(handlers::admin::add_user))
-            .wrap(from_fn(auth_jwt::mw_admin_auth_jwt)),
-    );
-}
-
-// Note: In this case, middleware is configured per config
-pub fn api_admin_users_id_config_apistos(cfg: &mut apiweb::ServiceConfig) {
-    cfg.service(
-        apiweb::resource("/users/{user_id}")
-            .route(apiweb::get().to(handlers::admin::get_user))
-            .route(apiweb::put().to(handlers::admin::update_user))
-            .route(apiweb::delete().to(handlers::admin::delete_user))
-            .wrap(from_fn(auth_jwt::mw_admin_auth_jwt)),
-    );
-}
-
 // [Path] /api/v1/app
 // - client login: [POST] `/app/login`
 // - Show Todos for Specific User: [GET] `/app/users/{user_id}/todos`
@@ -105,37 +71,6 @@ pub fn api_app_users_todo_id_config(cfg: &mut web::ServiceConfig) {
             .route(web::get().to(handlers::app::get_user_todo))
             .route(web::put().to(handlers::app::update_user_todo))
             .route(web::delete().to(handlers::app::delete_user_todo))
-            .wrap(from_fn(auth_jwt::mw_app_auth_jwt)),
-    );
-}
-
-/*
- apistos version
-*/
-
-pub fn api_app_login_config_apistos(cfg: &mut apiweb::ServiceConfig) {
-    cfg.service(
-        apiweb::resource("/login")
-            //.route(apiweb::get().to(HttpResponse::MethodNotAllowed))
-            .route(apiweb::post().to(handlers::app::app_login)),
-    );
-}
-
-pub fn api_app_users_todo_config_apistos(cfg: &mut apiweb::ServiceConfig) {
-    cfg.service(
-        apiweb::resource("/users/{user_id}/todos")
-            .route(apiweb::get().to(handlers::app::get_user_todo_list))
-            .route(apiweb::post().to(handlers::app::add_user_todo))
-            .wrap(from_fn(auth_jwt::mw_app_auth_jwt)),
-    );
-}
-
-pub fn api_app_users_todo_id_config_apistos(cfg: &mut apiweb::ServiceConfig) {
-    cfg.service(
-        apiweb::resource("/users/{user_id}/todos/{todo_id}")
-            .route(apiweb::get().to(handlers::app::get_user_todo))
-            .route(apiweb::put().to(handlers::app::update_user_todo))
-            .route(apiweb::delete().to(handlers::app::delete_user_todo))
             .wrap(from_fn(auth_jwt::mw_app_auth_jwt)),
     );
 }

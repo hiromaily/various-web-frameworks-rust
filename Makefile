@@ -59,6 +59,10 @@ run-argon2:
 run-scrypt:
 	RUST_LOG=debug cargo run --package actix --no-default-features --features "scrypt" -- ./config/local.toml -d
 
+.PHONY: run-openapi
+run-openapi:
+	RUST_LOG=debug cargo run --package actix --features "openapi" -- ./config/local.toml -d
+
 #------------------------------------------------------------------------------
 # execute axumfw
 #------------------------------------------------------------------------------

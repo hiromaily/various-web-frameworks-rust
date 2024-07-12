@@ -15,7 +15,7 @@ COPY ./Cargo.toml ./Cargo.toml
 COPY ./config/container.toml ./container.toml
 COPY ./crates ./crates
 
-RUN cargo build --release
+RUN cargo build --features "openapi" --release
 
 
 # Stage 2: Create a lightweight image to run the application

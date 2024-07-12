@@ -35,6 +35,7 @@ default = ["pbkdf2"]
 pbkdf2 = []
 argon2 = []
 scrypt = []
+openapi = []
 
 [lints]
 workspace = true
