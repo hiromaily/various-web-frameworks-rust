@@ -4,6 +4,7 @@ use components::toml;
 use log::info;
 
 // local
+use axumfw::middlewares::common::apply_middleware;
 use axumfw::routes;
 
 // refer to
@@ -38,6 +39,8 @@ async fn main() {
 
     // get router
     let router = routes::get_api_router(auth_state, admin_state, app_state);
+    // apply common middleware
+    let router = apply_middleware(router);
 
     let host = reg.conf.server.host;
     let port = reg.conf.server.port;

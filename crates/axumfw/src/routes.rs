@@ -5,12 +5,6 @@ use axum::{
     Router,
 };
 use components::state;
-//use tower::ServiceBuilder;
-//use tower_http::{add_extension::AddExtensionLayer, trace::TraceLayer};
-
-//.layer(TraceLayer::new_for_http())
-//.layer(AddExtensionLayer::new(state.clone()))
-//.layer(axum::middleware::from_fn(auth_jwt::print_request_body));
 
 // [Path] /api/v1/admin
 // - admin login: [POST] `/admin/login`
@@ -24,11 +18,6 @@ fn api_admin_login_router(state: state::AuthState) -> Router {
     Router::new()
         .route("/login", post(handlers::admin::admin_login))
         .with_state(state)
-    // cfg.service(
-    //     web::resource("/login")
-    //         .route(web::get().to(HttpResponse::MethodNotAllowed))
-    //         .route(web::post().to(handlers::admin::admin_login)),
-    // );
 }
 
 // Note: In this case, middleware is configured per config
@@ -41,12 +30,6 @@ fn api_admin_users_router(auth_state: state::AuthState, admin_state: state::Admi
             auth_jwt::mw_admin_auth_jwt,
         ))
         .with_state(admin_state)
-    // cfg.service(
-    //     web::resource("/users")
-    //         .route(web::get().to(handlers::admin::get_user_list))
-    //         .route(web::post().to(handlers::admin::add_user))
-    //         .wrap(from_fn(auth_jwt::mw_admin_auth_jwt)),
-    // );
 }
 
 // Note: In this case, middleware is configured per config
@@ -63,13 +46,6 @@ fn api_admin_users_id_router(
             auth_jwt::mw_admin_auth_jwt,
         ))
         .with_state(admin_state)
-    // cfg.service(
-    //     web::resource("/users/{user_id}")
-    //         .route(web::get().to(handlers::admin::get_user))
-    //         .route(web::put().to(handlers::admin::update_user))
-    //         .route(web::delete().to(handlers::admin::delete_user))
-    //         .wrap(from_fn(auth_jwt::mw_admin_auth_jwt)),
-    // );
 }
 
 fn api_admin_router(auth_state: state::AuthState, admin_state: state::AdminState) -> Router {
@@ -98,11 +74,6 @@ fn api_app_login_router(state: state::AuthState) -> Router {
     Router::new()
         .route("/login", post(handlers::app::app_login))
         .with_state(state)
-    // cfg.service(
-    //     web::resource("/login")
-    //         .route(web::get().to(HttpResponse::MethodNotAllowed))
-    //         .route(web::post().to(handlers::app::app_login)),
-    // );
 }
 
 fn api_app_users_todo_router(auth_state: state::AuthState, app_state: state::AppState) -> Router {
@@ -117,12 +88,6 @@ fn api_app_users_todo_router(auth_state: state::AuthState, app_state: state::App
             auth_jwt::mw_app_auth_jwt,
         ))
         .with_state(app_state)
-    // cfg.service(
-    //     web::resource("/users/{user_id}/todos")
-    //         .route(web::get().to(handlers::app::get_user_todo_list))
-    //         .route(web::post().to(handlers::app::add_user_todo))
-    //         .wrap(from_fn(auth_jwt::mw_app_auth_jwt)),
-    // );
 }
 
 fn api_app_users_todo_id_router(
@@ -147,13 +112,6 @@ fn api_app_users_todo_id_router(
             auth_jwt::mw_app_todo_id_auth_jwt,
         ))
         .with_state(app_state)
-    // cfg.service(
-    //     web::resource("/users/{user_id}/todos/{todo_id}")
-    //         .route(web::get().to(handlers::app::get_user_todo))
-    //         .route(web::put().to(handlers::app::update_user_todo))
-    //         .route(web::delete().to(handlers::app::delete_user_todo))
-    //         .wrap(from_fn(auth_jwt::mw_app_auth_jwt)),
-    // );
 }
 
 fn api_app_router(auth_state: state::AuthState, app_state: state::AppState) -> Router {
