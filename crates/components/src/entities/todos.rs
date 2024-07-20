@@ -1,4 +1,4 @@
-use crate::schemas::sea_orm_active_enums::TodoStatus;
+use crate::schemas::sea_orm::sea_orm_active_enums::TodoStatus;
 use apistos::ApiComponent;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};

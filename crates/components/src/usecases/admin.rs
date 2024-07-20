@@ -1,7 +1,7 @@
 use crate::entities::users;
 use crate::hashes::hash;
 use crate::repositories::{todos as repo_todos, users as repo_users};
-use crate::schemas::users as db_users;
+use crate::schemas::sea_orm::users as db_users;
 use anyhow;
 use async_trait::async_trait;
 use std::sync::Arc;

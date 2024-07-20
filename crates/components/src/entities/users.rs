@@ -1,4 +1,4 @@
-use crate::schemas::users::Model;
+use crate::schemas::sea_orm::users::Model;
 use apistos::ApiComponent;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};

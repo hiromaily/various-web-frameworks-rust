@@ -2,7 +2,7 @@ use crate::handlers::error::AppError;
 use axum::{extract::Path, extract::State, http::StatusCode, Json};
 use components::entities::login::LoginResult;
 use components::entities::users;
-use components::schemas::users as db_users;
+use components::schemas::sea_orm::users as db_users;
 use components::state;
 use validator::Validate;
 

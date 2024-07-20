@@ -1,5 +1,7 @@
 use crate::entities::todos::{TodoBody, TodoUpdateBody};
-use crate::schemas::{prelude::Todos, sea_orm_active_enums::TodoStatus, todos as db_todos};
+use crate::schemas::sea_orm::{
+    prelude::Todos, sea_orm_active_enums::TodoStatus, todos as db_todos,
+};
 //use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Utc;

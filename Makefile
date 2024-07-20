@@ -1,3 +1,6 @@
+#PQ_LIB_DIR="$(brew --prefix libpq)/lib"
+PQ_LIB_DIR := $(shell brew --prefix libpq)/lib
+
 .PHONY: update-rustc
 update-rustc:
 	rustup update stable
@@ -5,6 +8,8 @@ update-rustc:
 #------------------------------------------------------------------------------
 # main
 #------------------------------------------------------------------------------
+echo:
+	echo $(PQ_LIB_DIR)
 
 .PHONY: lint
 lint:
@@ -19,8 +24,25 @@ check-deps:
 fix:
 	cargo fix --allow-staged
 
+# [Problem]
+# when using Diesel, you may face error
+# - error: linking with `cc` failed
+# - ld: library not found for -lpq
+# - clang: error: linker command failed with exit code 1
+# [Solved]
+# set environment variable
+# ```zsh
+# export PQ_LIB_DIR=/opt/homebrew/opt/libpq/lib
+# export PKG_CONFIG_PATH=/opt/homebrew/opt/libpq/lib/pkgconfig
+# export PATH="$PATH:/opt/homebrew/opt/libpq/bin"
+# ```
+# then run `cargo clean` before building
 .PHONY: build
 build:
+	cargo build
+
+.PHONY: clean-build
+clean-build: clean
 	cargo build
 
 .PHONY: build-all
@@ -40,6 +62,10 @@ compile:
 .PHONY: test
 test:
 	cargo test
+
+.PHONY: clean
+clean:
+	cargo clean
 
 #------------------------------------------------------------------------------
 # execute actix
@@ -70,6 +96,24 @@ run-openapi:
 run-axumfw:
 	RUST_LOG=debug cargo run --package axumfw -- ./config/local.toml -d
 
+#------------------------------------------------------------------------------
+# diesel cli
+# Refer to
+# - https://diesel.rs/guides/getting-started
+#------------------------------------------------------------------------------
+# prerequirements:
+# - `brew install libpq` 
+# - create `.env` with your DATABASE_URL
+# refer to: https://github.com/sgrif/pq-sys
+.PHONY: setup-diesel-postgresql
+setup-diesel-postgresql:
+	PQ_LIB_DIR=$(PQ_LIB_DIR) cargo install diesel_cli --no-default-features --features postgres
+	diesel setup
+
+.PHONY: generate-diesel-entity-from-db
+generate-diesel-entity-from-db:
+	mkdir -p crates/components/src/schemas/diesel
+	diesel print-schema > crates/components/src/schemas/diesel/schema.rs
 
 #------------------------------------------------------------------------------
 # sea-orm
@@ -104,7 +148,7 @@ setup-sea-orm:
 .PHONY: generate-entity-from-db
 generate-entity-from-db:
 	rm -rf src/schemas
-	sea-orm-cli generate entity -u postgresql://admin:admin@127.0.0.1:5432/example -o crates/components/src/schemas --with-serde both
+	sea-orm-cli generate entity -u postgresql://admin:admin@127.0.0.1:5432/example -o crates/components/src/schemas/sea_orm --with-serde both
 
 #------------------------------------------------------------------------------
 # docker

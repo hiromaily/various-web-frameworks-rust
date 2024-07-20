@@ -1,6 +1,6 @@
 use crate::entities::todos;
 use crate::repositories::{todos as repo_todos, users as repo_users};
-use crate::schemas::todos as db_todos;
+use crate::schemas::sea_orm::todos as db_todos;
 use anyhow;
 use async_trait::async_trait;
 use std::sync::Arc;

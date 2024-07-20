@@ -1,7 +1,7 @@
 use crate::hashes::hash;
 use crate::jwt::{self, PayLoad};
 use crate::repositories::users as repo_users;
-use crate::schemas::users as db_users;
+use crate::schemas::sea_orm::users as db_users;
 use anyhow;
 use async_trait::async_trait;
 use log::debug;

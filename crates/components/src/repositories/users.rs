@@ -1,5 +1,5 @@
 use crate::entities::users::{UserBody, UserUpdateBody};
-use crate::schemas::{prelude::Users, users as db_users};
+use crate::schemas::sea_orm::{prelude::Users, users as db_users};
 //use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Utc;
