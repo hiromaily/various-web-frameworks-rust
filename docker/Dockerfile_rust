@@ -3,7 +3,7 @@ FROM rust:1.79-slim-buster as builder
 
 RUN apt-get update -y && \
   apt-get install -y pkg-config \
-  libssl-dev
+  libssl-dev libpq-dev
 
 WORKDIR /workspace
 

@@ -159,15 +159,16 @@ build-image:
 
 .PHONY: build-image-server
 build-image-server:
-	docker compose build --progress=plain server
+	docker compose build --progress=plain actix-server
+	#docker compose build --progress=plain axum-server
 
 .PHONY: up-db
 up-db:
 	docker compose up postgresql
 
-.PHONY: up-web
-up-web:
-	docker compose up server
+.PHONY: up-actix
+up-actix:
+	docker compose up actix-server
 
 .PHONY: reset-db
 reset-db:
