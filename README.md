@@ -19,6 +19,10 @@ This is composed of various web frameworks such as [actix-web](https://actix.rs/
 
 ## TODO
 
+### common
+
+- [diesel](https://diesel.rs/)
+
 ### axum
 
 - [x] middleware implementation
