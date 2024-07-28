@@ -1,5 +1,10 @@
-#PQ_LIB_DIR="$(brew --prefix libpq)/lib"
-PQ_LIB_DIR := $(shell brew --prefix libpq)/lib
+#PQ_LIB_DIR := $(shell brew --prefix libpq)/lib
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin) # MacOS
+    PQ_LIB_DIR := $(shell brew --prefix libpq)/lib
+else ifeq ($(UNAME_S),Linux) # Linux
+    PQ_LIB_DIR := /usr/lib/x86_64-linux-gnu
+endif
 
 .PHONY: update-rustc
 update-rustc:
@@ -108,12 +113,17 @@ run-axumfw:
 .PHONY: setup-diesel-postgresql
 setup-diesel-postgresql:
 	PQ_LIB_DIR=$(PQ_LIB_DIR) cargo install diesel_cli --no-default-features --features postgres
+	cargo install diesel_cli_ext
 	diesel setup
 
 .PHONY: generate-diesel-entity-from-db
 generate-diesel-entity-from-db:
 	mkdir -p crates/components/src/schemas/diesel
 	diesel print-schema > crates/components/src/schemas/diesel/schema.rs
+
+.PHONY: generate-diesel-model
+generate-diesel-model:
+	diesel_ext generate schema > crates/components/src/schemas/diesel/model.rs
 
 #------------------------------------------------------------------------------
 # sea-orm

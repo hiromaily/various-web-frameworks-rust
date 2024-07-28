@@ -22,7 +22,8 @@ use std::sync::Arc;
 
 async fn new_db_conn(db: &toml::PostgreSQL) -> Result<Option<sea_orm::DatabaseConnection>, DbErr> {
     if db.enabled {
-        let connected = conn::get_conn(&db.user, &db.password, &db.host, &db.dbname).await?;
+        let connected =
+            conn::get_sea_orm_conn(&db.user, &db.password, &db.host, &db.dbname).await?;
         return Ok(Some(connected));
     }
     Ok(None)

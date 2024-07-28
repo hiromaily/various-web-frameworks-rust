@@ -7,10 +7,6 @@ RUN apt-get update -y && \
 
 WORKDIR /workspace
 
-# RUN USER=root cargo new --bin actix
-# RUN USER=root cargo new --lib components
-# WORKDIR /actix-web-server
-
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./config/container.toml ./container.toml
 COPY ./crates ./crates
@@ -20,8 +16,8 @@ RUN cargo build --features "openapi" --release
 
 # Stage 2: Create a lightweight image to run the application
 FROM debian:buster-slim
-#FROM scratch
-RUN apt-get update && apt install -y openssl
+# libpq5 is not required
+RUN apt-get update && apt install -y openssl libpq-dev
 
 COPY --from=builder /workspace/target/release/actix /usr/local/bin/actix
 COPY --from=builder /workspace/target/release/axumfw /usr/local/bin/axumfw
@@ -30,5 +26,11 @@ COPY --from=builder /workspace/container.toml /container.toml
 # Run the application
 EXPOSE 8080
 
+#ENV LD_LIBRARY_PATH=/usr/local/pgsql/lib
+
 # ENTRYPOINT ["/usr/local/bin/actix"]
 # CMD ["container.toml"]
+
+# Note: when running CMD
+# /usr/local/bin/actix: error while loading shared libraries: libpq.so.5: cannot open shared object file: No such file or directory
+# libpq-dev required on stage2

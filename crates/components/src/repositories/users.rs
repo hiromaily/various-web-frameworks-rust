@@ -3,6 +3,7 @@ use crate::schemas::sea_orm::{prelude::Users, users as db_users};
 //use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Utc;
+use diesel::pg::PgConnection;
 use sea_orm::{self, ActiveModelTrait, ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter}; // DbErr
 use std::{
     clone::Clone,
@@ -42,7 +43,7 @@ pub trait UserRepository: Debug + Send + Sync + 'static {
 }
 
 /*******************************************************************************
- PostgreSQL
+ PostgreSQL by sea_orm
 *******************************************************************************/
 #[derive(Debug, Clone)]
 pub struct UserRepositoryForDB {
@@ -155,6 +156,21 @@ impl UserRepository for UserRepositoryForDB {
             .await
             .map(|res| res.rows_affected)
             .map_err(Into::into)
+    }
+}
+
+/*******************************************************************************
+ PostgreSQL by diesel
+*******************************************************************************/
+#[allow(dead_code)]
+
+pub struct UserRepositoryForDieselDB {
+    conn: PgConnection,
+}
+
+impl UserRepositoryForDieselDB {
+    pub fn new(conn: PgConnection) -> Self {
+        Self { conn }
     }
 }
 

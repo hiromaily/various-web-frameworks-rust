@@ -1,8 +1,11 @@
+use diesel::pg::PgConnection;
+use diesel::prelude::*;
+use diesel::ConnectionError;
 use sea_orm::{ConnectOptions, Database, DbErr};
 use std::time::Duration;
 
 // refer to: https://www.sea-ql.org/sea-orm-tutorial/ch01-01-project-setup.html
-pub async fn get_conn(
+pub async fn get_sea_orm_conn(
     user: &str,
     password: &str,
     host: &str,
@@ -41,4 +44,17 @@ pub async fn get_conn(
     // };
 
     Ok(conn)
+}
+
+pub fn get_diesel_conn(
+    user: &str,
+    password: &str,
+    host: &str,
+    db_name: &str,
+    //) -> ConnectionResult<PgConnection> {
+) -> Result<PgConnection, ConnectionError> {
+    let db_url = format!("postgresql://{user}:{password}@{host}/{db_name}");
+
+    PgConnection::establish(&db_url)
+    //.unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
