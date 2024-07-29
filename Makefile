@@ -1,9 +1,12 @@
 #PQ_LIB_DIR := $(shell brew --prefix libpq)/lib
+#PQ_LIB_DIR := /usr/lib/aarch64-linux-gnu
+	
 UNAME_S := $(shell uname -s)
+UNAME_P := $(shell uname -m) # e.g. aarch64
 ifeq ($(UNAME_S),Darwin) # MacOS
-    PQ_LIB_DIR := $(shell brew --prefix libpq)/lib
+	PQ_LIB_DIR := $(shell brew --prefix libpq)/lib
 else ifeq ($(UNAME_S),Linux) # Linux
-    PQ_LIB_DIR := /usr/lib/x86_64-linux-gnu
+	PQ_LIB_DIR := /usr/lib/$(UNAME_P)-linux-gnu
 endif
 
 .PHONY: update-rustc
@@ -93,6 +96,13 @@ run-scrypt:
 .PHONY: run-openapi
 run-openapi:
 	RUST_LOG=debug cargo run --package actix --features "openapi" -- ./config/local.toml -d
+
+# run actix-web with postgresql
+.PHONY: run-actix-db
+run-actix-db:
+	docker compose up -d postgresql actix-server
+
+# docker compose exec -it actix-server sh
 
 #------------------------------------------------------------------------------
 # execute axumfw
