@@ -38,6 +38,8 @@ sea-orm = { version = "^0.12.15", features = [
 ] }
 serde = { version = "1.0", features = ["derive"] }
 sha2 = "0.10"
+strum = "0.26"
+strum_macros = "0.26"
 thiserror = "1.0"
 toml = "0.8.13"
 validator = { version = "0.18", features = ["derive"] }
