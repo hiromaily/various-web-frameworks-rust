@@ -6,19 +6,20 @@ use strum_macros::{Display, EnumString, IntoStaticStr};
 
 use crate::schemas::diesel::schema::sql_types::TodoStatus as TodoStatusType;
 
-#[derive(
-    AsExpression,
-    Clone,
-    Copy,
-    Debug,
-    Display,
-    EnumString,
-    Eq,
-    FromSqlRow,
-    Hash,
-    IntoStaticStr,
-    PartialEq,
-)]
+// #[derive(
+//     AsExpression,
+//     Clone,
+//     Copy,
+//     Debug,
+//     Display,
+//     EnumString,
+//     Eq,
+//     FromSqlRow,
+//     Hash,
+//     IntoStaticStr,
+//     PartialEq,
+// )]
+#[derive(AsExpression, Debug, Display, EnumString, FromSqlRow, IntoStaticStr)]
 //#[diesel(sql_type = Text)]
 #[diesel(sql_type = TodoStatusType)]
 pub enum TodoStatus {

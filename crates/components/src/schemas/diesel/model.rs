@@ -3,6 +3,7 @@
 #![allow(unused)]
 #![allow(clippy::all)]
 
+use crate::schemas::diesel::todo_status::TodoStatus;
 use chrono::NaiveDateTime;
 use diesel::deserialize::{self, FromSql, Queryable};
 use diesel::pg::Pg;
@@ -33,15 +34,15 @@ pub struct User {
 }
 
 // Added
-use diesel::deserialize::FromSqlRow;
-use diesel::expression::AsExpression;
-use diesel::sql_types;
+// use diesel::deserialize::FromSqlRow;
+// use diesel::expression::AsExpression;
+// use diesel::sql_types;
 
-#[derive(Debug, AsExpression, FromSqlRow)]
-#[diesel(sql_type = Text)]
-pub enum TodoStatus {
-    Pending,
-    Doing,
-    Canceled,
-    Done,
-}
+// #[derive(Debug, AsExpression, FromSqlRow)]
+// #[diesel(sql_type = Text)]
+// pub enum TodoStatus {
+//     Pending,
+//     Doing,
+//     Canceled,
+//     Done,
+// }
