@@ -27,7 +27,6 @@ pub trait AppUsecase: Send + Sync + 'static {
     async fn delete_user_todo(&self, user_id: i32, todo_id: i32) -> anyhow::Result<u64>;
 }
 
-#[derive(Debug)]
 pub struct AppAction {
     pub todos_repo: Arc<dyn repo_todos::TodoRepository>,
     pub users_repo: Arc<dyn repo_users::UserRepository>, // for now, not used anywhere

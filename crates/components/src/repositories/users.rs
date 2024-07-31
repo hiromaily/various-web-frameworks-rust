@@ -23,7 +23,7 @@ enum RepositoryError {
 
 #[async_trait]
 //pub trait UserRepository: Debug + Clone + Send + Sync + 'static {
-pub trait UserRepository: Debug + Send + Sync + 'static {
+pub trait UserRepository: Send + Sync + 'static {
     async fn create(&self, payload: UserBody) -> anyhow::Result<db_users::Model>;
     async fn find(&self, email: &str, password: &str) -> anyhow::Result<Option<db_users::Model>>;
     async fn find_with_is_admin(
@@ -45,7 +45,6 @@ pub trait UserRepository: Debug + Send + Sync + 'static {
 /*******************************************************************************
  PostgreSQL by sea_orm
 *******************************************************************************/
-#[derive(Debug, Clone)]
 pub struct UserRepositoryForDB {
     conn: sea_orm::DatabaseConnection,
 }
@@ -163,7 +162,6 @@ impl UserRepository for UserRepositoryForDB {
  PostgreSQL by diesel
 *******************************************************************************/
 #[allow(dead_code)]
-
 pub struct UserRepositoryForDieselDB {
     conn: PgConnection,
 }
@@ -173,6 +171,34 @@ impl UserRepositoryForDieselDB {
         Self { conn }
     }
 }
+
+// #[async_trait]
+// impl UserRepository for UserRepositoryForDieselDB {
+//     async fn create(&self, payload: UserBody) -> anyhow::Result<db_users::Model> {}
+
+//     async fn find(&self, email: &str, password: &str) -> anyhow::Result<Option<db_users::Model>> {}
+
+//     async fn find_with_is_admin(
+//         &self,
+//         email: &str,
+//         password: &str,
+//         is_admin: bool,
+//     ) -> anyhow::Result<Option<db_users::Model>> {
+//     }
+
+//     async fn find_by_id(&self, id: i32) -> anyhow::Result<Option<db_users::Model>> {}
+
+//     async fn find_all(&self) -> anyhow::Result<Vec<db_users::Model>> {}
+
+//     async fn update(
+//         &self,
+//         id: i32,
+//         payload: UserUpdateBody,
+//     ) -> anyhow::Result<Option<db_users::Model>> {
+//     }
+
+//     async fn delete(&self, id: i32) -> anyhow::Result<u64> {}
+// }
 
 /*******************************************************************************
  On memory

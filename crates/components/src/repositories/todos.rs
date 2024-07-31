@@ -24,7 +24,7 @@ enum RepositoryError {
 
 #[async_trait]
 //pub trait TodoRepository: Debug + Clone + Send + Sync + 'static {
-pub trait TodoRepository: Debug + Send + Sync + 'static {
+pub trait TodoRepository: Send + Sync + 'static {
     async fn create(&self, user_id: i32, payload: TodoBody) -> anyhow::Result<db_todos::Model>;
     async fn find_by_id(&self, todo_id: i32) -> anyhow::Result<Option<db_todos::Model>>;
     async fn find_all(&self, user_id: i32) -> anyhow::Result<Vec<db_todos::Model>>;
@@ -39,7 +39,6 @@ pub trait TodoRepository: Debug + Send + Sync + 'static {
 /*******************************************************************************
  PostgreSQL by sea_orm
 *******************************************************************************/
-#[derive(Debug, Clone)]
 pub struct TodoRepositoryForDB {
     conn: sea_orm::DatabaseConnection,
 }

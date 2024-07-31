@@ -19,7 +19,6 @@ pub trait AdminUsecase: Send + Sync + 'static {
     async fn delete_user(&self, user_id: i32) -> anyhow::Result<u64>;
 }
 
-#[derive(Debug)]
 pub struct AdminAction<T: hash::Hash> {
     pub todos_repo: Arc<dyn repo_todos::TodoRepository>, // for now, not used anywhere
     pub users_repo: Arc<dyn repo_users::UserRepository>,

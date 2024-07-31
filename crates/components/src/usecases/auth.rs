@@ -24,7 +24,6 @@ pub trait AuthUsecase: Send + Sync + 'static {
  Auth for AuthAction
 *******************************************************************************/
 
-#[derive(Debug)]
 pub struct AuthAction<T: hash::Hash> {
     pub users_repo: Arc<dyn repo_users::UserRepository>,
     pub hash: T,
