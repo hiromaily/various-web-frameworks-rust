@@ -173,6 +173,12 @@ generate-entity-from-db:
 #------------------------------------------------------------------------------
 # docker
 #------------------------------------------------------------------------------
+# docker version 4.33+
+.PHONY: check-dockerfile
+check-dockerfile:
+	docker build -f ./docker/Dockerfile_rust . --check
+	docker build -f ./docker/Dockerfile_pg . --check
+
 .PHONY: build-image
 build-image:
 	docker compose build --progress=plain
