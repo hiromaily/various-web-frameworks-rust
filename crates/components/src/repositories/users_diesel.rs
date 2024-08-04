@@ -17,25 +17,24 @@ use std::{
 };
 use thiserror::Error;
 
-#[async_trait]
+//#[async_trait]
 pub trait UserRepository: Send + Sync + 'static {
     fn create(&mut self, payload: UserBody) -> anyhow::Result<diesel_users::User>;
-    async fn find(&self, email: &str, password: &str)
-        -> anyhow::Result<Option<diesel_users::User>>;
-    async fn find_with_is_admin(
+    fn find(&self, email: &str, password: &str) -> anyhow::Result<Option<diesel_users::User>>;
+    fn find_with_is_admin(
         &self,
         email: &str,
         password: &str,
         is_admin: bool,
     ) -> anyhow::Result<Option<diesel_users::User>>;
-    async fn find_by_id(&self, id: i32) -> anyhow::Result<Option<diesel_users::User>>;
+    fn find_by_id(&self, id: i32) -> anyhow::Result<Option<diesel_users::User>>;
     fn find_all(&self) -> anyhow::Result<Vec<diesel_users::User>>;
-    async fn update(
+    fn update(
         &self,
         id: i32,
         payload: UserUpdateBody,
     ) -> anyhow::Result<Option<diesel_users::User>>;
-    async fn delete(&self, id: i32) -> anyhow::Result<u64>;
+    fn delete(&self, id: i32) -> anyhow::Result<u64>;
 }
 
 /*******************************************************************************
@@ -65,7 +64,7 @@ impl UserRepositoryForDB {
     }
 }
 
-#[async_trait]
+//#[async_trait]
 impl UserRepository for UserRepositoryForDB {
     fn create(&mut self, payload: UserBody) -> anyhow::Result<diesel_users::User> {
         //unimplemented!("TODO");
@@ -95,25 +94,48 @@ impl UserRepository for UserRepositoryForDB {
             .map_err(Into::into)
     }
 
-    async fn find(
-        &self,
-        email: &str,
-        password: &str,
-    ) -> anyhow::Result<Option<diesel_users::User>> {
-        unimplemented!("TODO");
+    fn find(&self, email: &str, password: &str) -> anyhow::Result<Option<diesel_users::User>> {
+        //unimplemented!("TODO");
+        let mut conn = self.get_conn()?;
+        schema::users::table
+            .filter(schema::users::email.eq(email))
+            .filter(schema::users::password.eq(password))
+            .first::<diesel_users::User>(&mut conn)
+            .optional()
+            .map_err(Into::into)
     }
 
-    async fn find_with_is_admin(
+    fn find_with_is_admin(
         &self,
         email: &str,
         password: &str,
         is_admin: bool,
     ) -> anyhow::Result<Option<diesel_users::User>> {
-        unimplemented!("TODO");
+        // unimplemented!("TODO");
+        let mut conn = self.get_conn()?;
+        schema::users::table
+            .filter(schema::users::email.eq(email))
+            .filter(schema::users::password.eq(password))
+            .filter(schema::users::is_admin.eq(is_admin))
+            .first::<diesel_users::User>(&mut conn)
+            .optional()
+            .map_err(Into::into)
     }
 
-    async fn find_by_id(&self, id: i32) -> anyhow::Result<Option<diesel_users::User>> {
-        unimplemented!("TODO");
+    fn find_by_id(&self, id: i32) -> anyhow::Result<Option<diesel_users::User>> {
+        //unimplemented!("TODO");
+        let mut conn = self.get_conn()?;
+        schema::users::table
+            .find(id)
+            .first::<diesel_users::User>(&mut conn)
+            .optional()
+            .map_err(Into::into)
+
+        // match result {
+        //     Ok(Some(user)) => Ok(Some(user)),
+        //     Ok(None) => Ok(None),
+        //     Err(e) => Err(anyhow::anyhow!(e)),
+        // }
     }
 
     fn find_all(&self) -> anyhow::Result<Vec<diesel_users::User>> {
@@ -124,15 +146,26 @@ impl UserRepository for UserRepositoryForDB {
             .map_err(Into::into)
     }
 
-    async fn update(
+    fn update(
         &self,
         id: i32,
         payload: UserUpdateBody,
     ) -> anyhow::Result<Option<diesel_users::User>> {
-        unimplemented!("TODO");
+        //unimplemented!("TODO");
+        let mut conn = self.get_conn()?;
+        schema::users::table
+            .find(id)
+            .for_update()
+            .first::<diesel_users::User>(&mut conn)
+            .optional()
+            .map_err(Into::into)
     }
 
-    async fn delete(&self, id: i32) -> anyhow::Result<u64> {
-        unimplemented!("TODO");
+    fn delete(&self, id: i32) -> anyhow::Result<u64> {
+        //unimplemented!("TODO");
+        let mut conn = self.get_conn()?;
+        let num_deleted = diesel::delete(schema::users::table.find(id)).execute(&mut conn)?;
+
+        Ok(num_deleted as u64)
     }
 }
