@@ -29,7 +29,7 @@ pub trait UserRepository: Send + Sync + 'static {
         is_admin: bool,
     ) -> anyhow::Result<Option<diesel_users::User>>;
     async fn find_by_id(&self, id: i32) -> anyhow::Result<Option<diesel_users::User>>;
-    async fn find_all(&self) -> anyhow::Result<Vec<diesel_users::User>>;
+    fn find_all(&self) -> anyhow::Result<Vec<diesel_users::User>>;
     async fn update(
         &self,
         id: i32,
@@ -116,8 +116,12 @@ impl UserRepository for UserRepositoryForDB {
         unimplemented!("TODO");
     }
 
-    async fn find_all(&self) -> anyhow::Result<Vec<diesel_users::User>> {
-        unimplemented!("TODO");
+    fn find_all(&self) -> anyhow::Result<Vec<diesel_users::User>> {
+        //unimplemented!("TODO");
+        let mut conn = self.get_conn()?;
+        schema::users::table
+            .load::<diesel_users::User>(&mut conn)
+            .map_err(Into::into)
     }
 
     async fn update(

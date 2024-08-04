@@ -10,7 +10,8 @@ use diesel::deserialize::{self, FromSql, Queryable};
 use diesel::prelude::*;
 //use diesel::sql_types::Text;
 
-#[derive(Queryable, Selectable, Debug)]
+// Note: this User must have same filed to schema::users
+#[derive(Debug, Queryable, Selectable)]
 #[diesel(table_name = diesel_users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct User {
@@ -20,7 +21,7 @@ pub struct User {
     pub email: String,
     pub password: String,
     pub is_admin: bool,
-    //pub created_at: Option<NaiveDateTime>,
+    pub created_at: Option<NaiveDateTime>,
 }
 
 #[derive(Insertable, Debug)]
