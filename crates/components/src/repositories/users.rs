@@ -3,7 +3,6 @@ use crate::schemas::sea_orm::{prelude::Users, users as db_users};
 //use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Utc;
-use diesel::pg::PgConnection;
 use sea_orm::{self, ActiveModelTrait, ActiveValue::Set, ColumnTrait, EntityTrait, QueryFilter}; // DbErr
 use std::{
     clone::Clone,
@@ -157,48 +156,6 @@ impl UserRepository for UserRepositoryForDB {
             .map_err(Into::into)
     }
 }
-
-/*******************************************************************************
- PostgreSQL by diesel
-*******************************************************************************/
-#[allow(dead_code)]
-pub struct UserRepositoryForDieselDB {
-    conn: PgConnection,
-}
-
-impl UserRepositoryForDieselDB {
-    pub fn new(conn: PgConnection) -> Self {
-        Self { conn }
-    }
-}
-
-// #[async_trait]
-// impl UserRepository for UserRepositoryForDieselDB {
-//     async fn create(&self, payload: UserBody) -> anyhow::Result<db_users::Model> {}
-
-//     async fn find(&self, email: &str, password: &str) -> anyhow::Result<Option<db_users::Model>> {}
-
-//     async fn find_with_is_admin(
-//         &self,
-//         email: &str,
-//         password: &str,
-//         is_admin: bool,
-//     ) -> anyhow::Result<Option<db_users::Model>> {
-//     }
-
-//     async fn find_by_id(&self, id: i32) -> anyhow::Result<Option<db_users::Model>> {}
-
-//     async fn find_all(&self) -> anyhow::Result<Vec<db_users::Model>> {}
-
-//     async fn update(
-//         &self,
-//         id: i32,
-//         payload: UserUpdateBody,
-//     ) -> anyhow::Result<Option<db_users::Model>> {
-//     }
-
-//     async fn delete(&self, id: i32) -> anyhow::Result<u64> {}
-// }
 
 /*******************************************************************************
  On memory

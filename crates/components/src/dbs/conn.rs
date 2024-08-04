@@ -1,8 +1,14 @@
+use anyhow::{Context, Result as AnyhowResult};
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+use diesel::r2d2::{self, ConnectionManager, Pool};
 use diesel::ConnectionError;
 use sea_orm::{ConnectOptions, Database, DbErr};
 use std::time::Duration;
+
+//-----------------------------------------------------------------------------
+// sea_orm
+//-----------------------------------------------------------------------------
 
 // refer to: https://www.sea-ql.org/sea-orm-tutorial/ch01-01-project-setup.html
 pub async fn get_sea_orm_conn(
@@ -46,6 +52,10 @@ pub async fn get_sea_orm_conn(
     Ok(conn)
 }
 
+//-----------------------------------------------------------------------------
+// diesel
+//-----------------------------------------------------------------------------
+
 pub fn get_diesel_conn(
     user: &str,
     password: &str,
@@ -57,4 +67,19 @@ pub fn get_diesel_conn(
 
     PgConnection::establish(&db_url)
     //.unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+}
+
+pub fn get_diesel_pool(
+    user: &str,
+    password: &str,
+    host: &str,
+    db_name: &str,
+    //) -> ConnectionResult<PgConnection> {
+) -> AnyhowResult<Pool<ConnectionManager<PgConnection>>> {
+    let db_url = format!("postgresql://{user}:{password}@{host}/{db_name}");
+
+    let manager = ConnectionManager::<PgConnection>::new(db_url);
+    r2d2::Pool::builder()
+        .build(manager)
+        .context("Failed to create database connection pool")
 }

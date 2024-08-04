@@ -22,13 +22,14 @@ base64 = "0.22"
 cfg-if = "1.0.0"
 chrono = "0.4"
 clap = { version = "4", features = ["derive"] }
-diesel = { version = "2.2.1", features = ["postgres"] }
+diesel = { version = "2.2.1", features = ["postgres", "r2d2"] }
 dotenvy = "0.15.6"
 jsonwebtoken = "9"
 jwt-simple = "0.11"
 log = { version = "0.4", features = ["std", "serde"] }
 pbkdf2 = { version = "0.12", features = ["simple"] }
 rand_core = { version = "0.6", features = ["std"] }
+r2d2 = "0.8"
 schemars = { package = "apistos-schemars", version = "0.8" }
 scrypt = "0.11"
 sea-orm = { version = "^0.12.15", features = [
