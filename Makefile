@@ -71,6 +71,11 @@ compile:
 test:
 	cargo test
 
+.PHONY: integration-test
+integration-test:
+	cargo test --test integration_test -- --ignored
+
+
 .PHONY: clean
 clean:
 	cargo clean

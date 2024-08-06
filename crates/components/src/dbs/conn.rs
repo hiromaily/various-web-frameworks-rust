@@ -3,6 +3,7 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager, Pool};
 use diesel::ConnectionError;
+use dotenvy::dotenv;
 use sea_orm::{ConnectOptions, Database, DbErr};
 use std::time::Duration;
 
@@ -69,6 +70,14 @@ pub fn get_diesel_conn(
     //.unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
+// use for test
+pub fn get_diesel_conn_with_env() -> Result<PgConnection, ConnectionError> {
+    dotenv().unwrap();
+    let db_url = std::env::var("DATABASE_URL").unwrap();
+
+    PgConnection::establish(&db_url)
+}
+
 pub fn get_diesel_pool(
     user: &str,
     password: &str,
@@ -77,6 +86,16 @@ pub fn get_diesel_pool(
     //) -> ConnectionResult<PgConnection> {
 ) -> AnyhowResult<Pool<ConnectionManager<PgConnection>>> {
     let db_url = format!("postgresql://{user}:{password}@{host}/{db_name}");
+
+    let manager = ConnectionManager::<PgConnection>::new(db_url);
+    r2d2::Pool::builder()
+        .build(manager)
+        .context("Failed to create database connection pool")
+}
+
+pub fn get_diesel_pool_with_env() -> AnyhowResult<Pool<ConnectionManager<PgConnection>>> {
+    dotenv().unwrap();
+    let db_url = std::env::var("DATABASE_URL").unwrap();
 
     let manager = ConnectionManager::<PgConnection>::new(db_url);
     r2d2::Pool::builder()
