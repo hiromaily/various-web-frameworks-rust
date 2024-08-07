@@ -34,6 +34,16 @@ pub struct CreateUser<'a> {
     pub is_admin: bool,
 }
 
+#[derive(AsChangeset, Debug)]
+#[diesel(table_name = diesel_users)]
+pub struct UpdateUser {
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub email: Option<String>,
+    pub password: Option<String>,
+    pub is_admin: Option<bool>,
+}
+
 // Added
 // use diesel::deserialize::FromSqlRow;
 // use diesel::expression::AsExpression;

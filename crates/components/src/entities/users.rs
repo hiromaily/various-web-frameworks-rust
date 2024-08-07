@@ -1,3 +1,4 @@
+use crate::schemas::diesel::users::UpdateUser;
 use crate::schemas::sea_orm::users::Model;
 use apistos::ApiComponent;
 use schemars::JsonSchema;
@@ -42,6 +43,28 @@ pub struct UserUpdateBody {
     #[validate(length(min = 10, max = 20))]
     pub password: Option<String>,
     pub is_admin: Option<bool>,
+}
+
+// For diesel model
+//
+// # Examples
+//
+// ```
+// fn something(payload: UserUpdateBody) -> diesel_users::UpdateUser {
+//     let convertd_payload: diesel_users::UpdateUser = payload.into();
+//     convertd_payload
+// }
+// ```
+impl From<UserUpdateBody> for UpdateUser {
+    fn from(user_update_body: UserUpdateBody) -> Self {
+        UpdateUser {
+            first_name: user_update_body.first_name,
+            last_name: user_update_body.last_name,
+            email: user_update_body.email,
+            password: user_update_body.password,
+            is_admin: user_update_body.is_admin,
+        }
+    }
 }
 
 #[derive(ApiComponent, JsonSchema)]

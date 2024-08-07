@@ -3,6 +3,7 @@
 
 use crate::entities::users::{UserBody, UserUpdateBody};
 use crate::schemas::diesel::schema;
+use crate::schemas::diesel::schema::users::first_name;
 use crate::schemas::diesel::users as diesel_users;
 use async_trait::async_trait;
 use diesel::pg::PgConnection;
@@ -29,11 +30,7 @@ pub trait UserRepository: Send + Sync + 'static {
     ) -> anyhow::Result<Option<diesel_users::User>>;
     fn find_by_id(&self, id: i32) -> anyhow::Result<Option<diesel_users::User>>;
     fn find_all(&self) -> anyhow::Result<Vec<diesel_users::User>>;
-    fn update(
-        &self,
-        id: i32,
-        payload: UserUpdateBody,
-    ) -> anyhow::Result<Option<diesel_users::User>>;
+    fn update(&self, id: i32, payload: UserUpdateBody) -> anyhow::Result<diesel_users::User>;
     fn delete(&self, id: i32) -> anyhow::Result<u64>;
 }
 
@@ -146,18 +143,29 @@ impl UserRepository for UserRepositoryForDB {
             .map_err(Into::into)
     }
 
-    fn update(
-        &self,
-        id: i32,
-        payload: UserUpdateBody,
-    ) -> anyhow::Result<Option<diesel_users::User>> {
+    fn update(&self, id: i32, payload: UserUpdateBody) -> anyhow::Result<diesel_users::User> {
         //unimplemented!("TODO");
         let mut conn = self.get_conn()?;
-        schema::users::table
-            .find(id)
-            .for_update()
-            .first::<diesel_users::User>(&mut conn)
-            .optional()
+        // schema::users::table
+        //     .find(id)
+        //     .for_update()
+        //     .first::<diesel_users::User>(&mut conn)
+        //     .optional()
+        //     .map_err(Into::into)
+
+        // diesel::update(schema::users::table.find(id))
+        //     .set(first_name.eq("hogehoge"))
+        //     .returning(diesel_users::User::as_returning())
+        //     .get_result(&mut conn)
+        //     .map_err(Into::into)
+
+        // convert UserUpdateBody to diesel_users::UpdateUser
+        let convertd_payload: diesel_users::UpdateUser = payload.into();
+
+        diesel::update(schema::users::table.find(id))
+            .set::<diesel_users::UpdateUser>(convertd_payload)
+            .returning(diesel_users::User::as_returning())
+            .get_result(&mut conn)
             .map_err(Into::into)
     }
 
