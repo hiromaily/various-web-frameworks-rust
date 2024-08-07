@@ -75,6 +75,9 @@ test:
 integration-test:
 	cargo test --test integration_test -- --ignored
 
+.PHONY: integration-test-debug
+integration-test-debug:
+	cargo test --test integration_test -- --ignored --nocapture
 
 .PHONY: clean
 clean:
