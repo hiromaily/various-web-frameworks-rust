@@ -166,4 +166,11 @@ mod tests {
             }
         }
     }
+
+    // #[test]
+    // #[ignore] // integration test must be ignored as default
+    // fn test_diesel_todo_repository() {
+    //     let pool =
+    //         get_diesel_pool_with_env().expect("Failed to establish a connection to database");
+    // }
 }
