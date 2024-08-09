@@ -22,7 +22,9 @@ This is composed of various web frameworks such as [actix-web](https://actix.rs/
 
 ### common
 
-- [diesel](https://diesel.rs/) implementation in repository
+- [diesel](https://diesel.rs/) implementation
+- integration test for diesel implementation
+- maybe better to use [diesel-derive-enum](https://github.com/adwhit/diesel-derive-enum) for enum
 
 ### axum
 
