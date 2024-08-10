@@ -43,17 +43,3 @@ pub struct UpdateUser {
     pub password: Option<String>,
     pub is_admin: Option<bool>,
 }
-
-// Added
-// use diesel::deserialize::FromSqlRow;
-// use diesel::expression::AsExpression;
-// use diesel::sql_types;
-
-// #[derive(Debug, AsExpression, FromSqlRow)]
-// #[diesel(sql_type = Text)]
-// pub enum TodoStatus {
-//     Pending,
-//     Doing,
-//     Canceled,
-//     Done,
-// }

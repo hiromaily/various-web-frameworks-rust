@@ -55,7 +55,11 @@ impl TodoRepository for TodoRepositoryForDB {
         // actually: Result<db_todos::Model, DbErr>
 
         // already validated
-        let status = payload.status.parse::<TodoStatus>().unwrap();
+        let status = payload
+            .status
+            .parse::<TodoStatus>()
+            .map_err(|_| anyhow::anyhow!("Failed to parse TodoStatus from payload status"))?;
+        //.context("Failed to parse TodoStatus from payload string")?;
 
         let todo = db_todos::ActiveModel {
             user_id: Set(user_id),

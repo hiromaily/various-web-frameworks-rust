@@ -51,8 +51,8 @@ pub struct UserUpdateBody {
 //
 // ```
 // fn something(payload: UserUpdateBody) -> diesel_users::UpdateUser {
-//     let convertd_payload: diesel_users::UpdateUser = payload.into();
-//     convertd_payload
+//     let converted_payload: diesel_users::UpdateUser = payload.into();
+//     converted_payload
 // }
 // ```
 impl From<UserUpdateBody> for UpdateUser {

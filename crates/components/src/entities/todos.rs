@@ -1,3 +1,5 @@
+use crate::schemas::diesel::todo_status::TodoStatus as DieselTodoStatus;
+use crate::schemas::diesel::todos::UpdateTodo;
 use crate::schemas::sea_orm::sea_orm_active_enums::TodoStatus;
 use apistos::ApiComponent;
 use schemars::JsonSchema;
@@ -33,6 +35,32 @@ pub struct TodoUpdateBody {
     pub description: Option<String>,
     #[validate(length(min = 1), custom(function = "validate_status"))]
     pub status: Option<String>,
+}
+
+// For diesel model
+//
+// # Examples
+//
+// ```
+// fn something(payload: TodoUpdateBody) -> diesel_todos::UpdateTodo {
+//     let converted_payload: diesel_todos::UpdateTodo = payload.into();
+//     converted_payload
+// }
+// ```
+impl From<TodoUpdateBody> for UpdateTodo {
+    fn from(todo_update_body: TodoUpdateBody) -> Self {
+        // status: Option<TodoStatus> : Option<String>
+        let status: Option<DieselTodoStatus> = todo_update_body
+            .status
+            .as_deref() // Converts Option<String> to Option<&str>
+            .map(|s| s.parse::<DieselTodoStatus>().unwrap());
+
+        UpdateTodo {
+            title: todo_update_body.title,
+            description: todo_update_body.description,
+            status,
+        }
+    }
 }
 
 /// extension for TodoStatus

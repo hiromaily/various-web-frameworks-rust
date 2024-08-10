@@ -30,3 +30,11 @@ pub struct CreateTodo<'a> {
     pub description: Option<&'a str>,
     pub status: TodoStatus,
 }
+
+#[derive(AsChangeset, Debug)]
+#[diesel(table_name = diesel_todos)]
+pub struct UpdateTodo {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub status: Option<TodoStatus>,
+}
