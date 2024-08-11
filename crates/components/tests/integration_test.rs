@@ -1,18 +1,18 @@
 #[cfg(test)]
 mod tests {
     use components::dbs::conn::*;
+    use components::entities::todos::{TodoBody, TodoUpdateBody};
     use components::entities::users::{UserBody, UserUpdateBody};
+    use components::repositories::todos_diesel;
+    use components::repositories::todos_diesel::TodoRepository;
     use components::repositories::users_diesel;
     use components::repositories::users_diesel::UserRepository;
     use components::schemas::diesel::schema;
+    use components::schemas::diesel::todo_status::TodoStatus;
+    use components::schemas::diesel::todos as diesel_todos;
     use components::schemas::diesel::users as diesel_users;
     use diesel::prelude::*;
     use validator::ValidateLength; // required
-
-    // use super::*;
-    // use diesel::prelude::*;
-    // use diesel::r2d2::{self, ConnectionManager};
-    // use my_project::test_helpers::{get_test_db_pool, setup_test_database};
 
     // utility
     fn assert_found_user(result: anyhow::Result<Option<diesel_users::User>>) {
@@ -30,6 +30,26 @@ mod tests {
             }
             Err(e) => {
                 panic!("Failed to find user: {:?}", e);
+            }
+        }
+    }
+
+    fn assert_found_todo(result: anyhow::Result<Option<diesel_todos::Todo>>) {
+        match result {
+            Ok(Some(todo)) => {
+                println!("Found todo: {:?}", todo); // debug
+                assert_eq!(todo.title, "Study Rust");
+                assert_eq!(
+                    todo.description,
+                    Some("read book of programming Rust".to_string())
+                );
+                assert!(matches!(todo.status, TodoStatus::Pending));
+            }
+            Ok(None) => {
+                panic!("Todo must be returned");
+            }
+            Err(e) => {
+                panic!("Failed to find todo: {:?}", e);
             }
         }
     }
@@ -167,10 +187,86 @@ mod tests {
         }
     }
 
-    // #[test]
-    // #[ignore] // integration test must be ignored as default
-    // fn test_diesel_todo_repository() {
-    //     let pool =
-    //         get_diesel_pool_with_env().expect("Failed to establish a connection to database");
-    // }
+    #[test]
+    #[ignore] // integration test must be ignored as default
+    fn test_diesel_todo_repository() {
+        let pool =
+            get_diesel_pool_with_env().expect("Failed to establish a connection to database");
+
+        let mut todos_repo = todos_diesel::TodoRepositoryForDB::new(pool);
+
+        // create
+        let todo_data = TodoBody {
+            title: String::from("Study Rust"),
+            description: Some(String::from("read book of programming Rust")),
+            status: String::from("pending"),
+        };
+
+        let user_id = 1;
+        let result = todos_repo.create(user_id, todo_data);
+        let todo_id = match result {
+            Ok(todo) => {
+                println!("Created todo: {:?}", todo); // debug
+                assert_eq!(todo.title, "Study Rust");
+                assert_eq!(
+                    todo.description,
+                    Some("read book of programming Rust".to_string())
+                );
+                assert!(matches!(todo.status, TodoStatus::Pending));
+                todo.id
+            }
+            Err(e) => panic!("Failed to create todo: {:?}", e),
+        };
+
+        // find_by_id
+        let result = todos_repo.find_by_id(todo_id);
+        assert_found_todo(result);
+
+        // find_all
+        let result = todos_repo.find_all();
+        match result {
+            Ok(todos) => {
+                println!("Found todos: {:?}", todos); // debug
+                assert_eq!(todos.length(), Some(1));
+            }
+            Err(e) => panic!("Failed to find todos: {:?}", e),
+        }
+
+        // update
+        let todo_update = TodoUpdateBody {
+            title: Some("Study Rust Updated".into()),
+            description: Some("read book of programming Rust updated".into()),
+            status: Some("doing".into()),
+        };
+        let result = todos_repo.update(todo_id, todo_update);
+        match result {
+            Ok(todo) => {
+                println!("Updated todo: {:?}", todo); // debug
+                assert_eq!(todo.title, "Study Rust Updated");
+                assert_eq!(
+                    todo.description,
+                    Some("read book of programming Rust updated".into())
+                );
+                assert!(matches!(todo.status, TodoStatus::Doing));
+            }
+            Err(e) => {
+                panic!("Failed to update todo: {:?}", e);
+            }
+        }
+
+        // delete
+        let _ = todos_repo.delete(todo_id);
+        let result = todos_repo.find_by_id(todo_id); // must be none
+        match result {
+            Ok(Some(_todo)) => {
+                panic!("Todo must not be returned");
+            }
+            Ok(None) => {
+                println!("OK");
+            }
+            Err(e) => {
+                panic!("Failed to find todo: {:?}", e);
+            }
+        }
+    }
 }
