@@ -119,6 +119,15 @@ run-actix-db:
 run-axumfw:
 	RUST_LOG=debug cargo run --package axumfw -- ./config/local.toml -d
 
+
+#------------------------------------------------------------------------------
+# execute webserver
+#------------------------------------------------------------------------------
+.PHONY: run-web
+run-web:
+	RUST_LOG=debug cargo run --package webserver -- ./config/local.toml -d
+
+
 #------------------------------------------------------------------------------
 # diesel cli
 # Refer to

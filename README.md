@@ -18,6 +18,20 @@ This is composed of various web frameworks such as [actix-web](https://actix.rs/
 | [WIP] web-server | bin  | web server without framework                       |
 | components       | lib  | framework common packages depended from bin crates |
 
+## Run web server
+
+- web server with actix
+
+```sh
+cargo run --package actix --features "openapi" -- ./config/local.toml -d
+```
+
+- web server with axum
+
+```sh
+cargo run --package axumfw -- ./config/local.toml -d
+```
+
 ## TODO
 
 ### common
