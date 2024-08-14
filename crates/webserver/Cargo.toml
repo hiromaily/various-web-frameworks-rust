@@ -1,0 +1,10 @@
+[package]
+name = "webserver"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+httparse = "1.9.4"
+
+[lints]
+workspace = true
