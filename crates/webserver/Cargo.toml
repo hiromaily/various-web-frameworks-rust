@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 httparse = "1.9.4"
+url = "2.5"
 
 [lints]
 workspace = true

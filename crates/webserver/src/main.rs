@@ -5,7 +5,11 @@ use std::str;
 
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
-    stream.read(&mut buffer).unwrap();
+    let bytes_read = stream.read(&mut buffer).unwrap();
+    if bytes_read == 0 {
+        println!("connection closed by client.");
+        return;
+    }
 
     // handle headers
     let mut headers = [EMPTY_HEADER; 16];
@@ -16,6 +20,7 @@ fn handle_connection(mut stream: TcpStream) {
     let path = req.path.unwrap_or("");
     println!("got a request: method: {}, path: {}", method, path);
 
+    // handler
     match (method, path) {
         ("GET", "/") => {
             let response = "HTTP/1.1 200 OK\r\n\r\n<h1>Hello, GET!</h1>";
