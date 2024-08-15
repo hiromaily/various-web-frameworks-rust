@@ -8,6 +8,7 @@ req: req-get req-post
 .PHONY: req-get
 req-get:
 	curl http://127.0.0.1:8080/
+	curl 'http://127.0.0.1:8080/?foo=bar&item=5'
 
 .PHONY: req-post
 req-post:
