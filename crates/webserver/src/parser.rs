@@ -1,26 +1,9 @@
+use crate::request;
 use httparse::EMPTY_HEADER;
 use std::io::prelude::*;
 use std::net::TcpStream;
 use std::str;
 use url::Url;
-
-pub struct Request {
-    pub method: String,
-    pub path: String,
-    pub query: Option<String>,
-    pub body: Option<String>,
-}
-
-impl Request {
-    fn new(method: String, path: String, query: Option<String>, body: Option<String>) -> Self {
-        Request {
-            method,
-            path,
-            query,
-            body,
-        }
-    }
-}
 
 // FIXME: expected named lifetime parameter
 //fn extract_host_header(headers: &[httparse::Header<'_>; 16]) -> &str {
@@ -70,7 +53,7 @@ pub fn parse_url(url_path: &str) {
 // ```
 // parser::parse_url(format!("http://dummy.com{}", path).as_str());
 // ```
-pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<Request>> {
+pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<request::Request>> {
     let mut buffer = [0; 1024];
     let bytes_read = stream.read(&mut buffer)?;
     if bytes_read == 0 {
@@ -112,5 +95,10 @@ pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<Request>> {
     //     host, method, path
     // );
 
-    Ok(Some(Request::new(method, path.to_string(), query, body)))
+    Ok(Some(request::Request::new(
+        method,
+        path.to_string(),
+        query,
+        body,
+    )))
 }
