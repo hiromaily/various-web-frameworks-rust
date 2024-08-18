@@ -7,6 +7,7 @@ pub struct Response {
 }
 
 impl Response {
+    #[allow(clippy::inherent_to_string)]
     pub fn to_string(&self) -> String {
         let headers = self
             .headers

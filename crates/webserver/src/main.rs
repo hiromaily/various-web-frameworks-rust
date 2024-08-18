@@ -1,5 +1,5 @@
 use clap::Parser;
-use log::{debug, info};
+use log::{debug, error, info};
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
@@ -99,6 +99,8 @@ fn main() {
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
-        let _ = handle_connection(stream, &router);
+        if let Err(e) = handle_connection(stream, &router) {
+            error!("{e}");
+        }
     }
 }
