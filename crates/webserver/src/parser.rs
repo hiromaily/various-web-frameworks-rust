@@ -83,7 +83,7 @@ pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<request::Re
 
     // get body
     let body: Option<String> = if method == "POST" {
-        get_request_body(&buffer)
+        get_request_body(&buffer[..bytes_read])
     } else {
         None
     };
