@@ -3,6 +3,7 @@ use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
 // local
+use webserver::errors;
 use webserver::handler;
 use webserver::middleware;
 use webserver::parser;
@@ -21,7 +22,27 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
     request.print();
 
     // middleware
-    router.run_middleware(&request)?;
+    if let Err(e) = router.run_middleware(&request) {
+        // Determine the HTTP status code based on the error
+        // let response = match e.downcast_ref::<errors::HTTPErrorMessage>() {
+        //     Some(_) => {
+        //         "HTTP/1.1 415 Unsupported Media Type\r\n\r\n<h1>415 Unsupported Media Type</h1>"
+        //     }
+        //     None => "HTTP/1.1 400 Bad Request\r\n\r\n<h1>400 Bad Request</h1>",
+        // };
+        let custom_error = e
+            .downcast_ref::<errors::HTTPErrorMessage>()
+            .unwrap_or(&errors::HTTPErrorMessage::InvalidRequestFormat);
+
+        let response = format!(
+            "HTTP/1.1 {} {}\r\n\r\n<h1>{}</h1>",
+            custom_error.status_code(),
+            custom_error,
+            custom_error
+        );
+        stream.write_all(response.as_bytes())?;
+        return Ok(()); // Stop processing further after the error
+    }
 
     // handler
     let handler = router.route(&request.method, &request.path);
