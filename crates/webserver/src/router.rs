@@ -1,8 +1,9 @@
 use crate::middleware;
 use crate::request;
+use crate::responser::Response;
 use std::collections::HashMap;
 
-type Handler = fn(&request::Request) -> anyhow::Result<String>;
+type Handler = fn(&request::Request) -> anyhow::Result<Response>;
 
 pub struct Router {
     route_map: HashMap<(String, String), Handler>,

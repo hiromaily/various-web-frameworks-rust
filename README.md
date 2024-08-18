@@ -47,6 +47,9 @@ cargo run --package axumfw -- ./config/local.toml -d
 - [x] implement router
 - [x] implement middleware
 - [ ] implement responser
+  - Error
+  - HTML
+  - JSON
 
 ### axum
 

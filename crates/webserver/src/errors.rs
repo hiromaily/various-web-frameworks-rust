@@ -29,13 +29,13 @@ impl HTTPErrorMessage {
         }
     }
 
-    pub fn response(&self) -> String {
-        format!(
-            "HTTP/1.1 {} {}\r\n\r\n<h1>{} {}</h1>\r\n",
-            self.status_code(),
-            self,
-            self.status_code(),
-            self
-        )
-    }
+    // pub fn response(&self) -> String {
+    //     format!(
+    //         "HTTP/1.1 {} {}\r\n\r\n<h1>{} {}</h1>\r\n",
+    //         self.status_code(),
+    //         self,
+    //         self.status_code(),
+    //         self
+    //     )
+    // }
 }

@@ -8,6 +8,7 @@ use webserver::errors::HTTPErrorMessage;
 use webserver::handler;
 use webserver::middleware;
 use webserver::parser;
+use webserver::responser::Response;
 use webserver::router;
 
 /// single thread HTTP server
@@ -38,8 +39,9 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
             .downcast_ref::<HTTPErrorMessage>()
             .unwrap_or(&HTTPErrorMessage::InvalidRequestFormat);
 
-        let response = custom_error.response();
-        stream.write_all(response.as_bytes())?;
+        //let response = custom_error.response();
+        let response = Response::error_html(custom_error);
+        stream.write_all(response.to_string().as_bytes())?;
         stream.flush()?;
         return Ok(()); // Stop processing further after the error
     }
@@ -49,11 +51,12 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
     match handler {
         Some(h) => {
             let response = h(&request)?;
-            stream.write_all(response.as_bytes())?;
+            stream.write_all(response.to_string().as_bytes())?;
         }
         None => {
-            let response = HTTPErrorMessage::NotFound.response();
-            stream.write_all(response.as_bytes())?;
+            //let response = HTTPErrorMessage::NotFound.response();
+            let response = Response::error_html(&HTTPErrorMessage::NotFound);
+            stream.write_all(response.to_string().as_bytes())?;
         }
     }
     // match (method.as_ref(), path.as_ref()) {
