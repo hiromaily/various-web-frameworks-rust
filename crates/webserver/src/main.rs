@@ -1,3 +1,4 @@
+use log::info;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
@@ -16,18 +17,10 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
         Some(req) => req,
         None => return Ok(()),
     };
-    let method = &request.method;
-    let path = &request.path;
-    let query = &request.query;
-    let body = &request.body;
-    println!(
-        "get_method_path(): \n method:{:?}, path:{}, query: {:?}, body:{:?}",
-        method, path, query, body,
-    );
-
-    let handler = router.route(&request.method, &request.path);
+    request.print();
 
     // handler
+    let handler = router.route(&request.method, &request.path);
     match handler {
         Some(h) => {
             let response = h(&request)?;
@@ -44,16 +37,9 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
     //         stream.write_all(response.as_bytes()).unwrap();
     //     }
     //     ("POST", "/submit") => {
-    //         // Parse the body
-    //         //if let Some(body) = parser::get_request_body(&buffer) {
-    //         if body.is_none() {
-    //             let response = "HTTP/1.1 400 BAD REQUEST\r\n\r\n<h1>Bad Request</h1>";
-    //             stream.write_all(response.as_bytes()).unwrap();
-    //         } else {
-    //             println!("Received POST data: {}", body.as_ref().unwrap());
-    //             let response = "HTTP/1.1 200 OK\r\n\r\n<h1>Post Data Received</h1>";
-    //             stream.write_all(response.as_bytes()).unwrap();
-    //         }
+    //         println!("Received POST data: {}", body.as_ref().unwrap());
+    //         let response = "HTTP/1.1 200 OK\r\n\r\n<h1>Post Data Received</h1>";
+    //         stream.write_all(response.as_bytes()).unwrap();
     //     }
     //     _ => {
     //         let response = "HTTP/1.1 404 NOT FOUND\r\n\r\n<h1>404 Not Found</h1>";
@@ -66,6 +52,8 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
 }
 
 fn main() {
+    env_logger::init();
+
     // configure router
     let mut router = router::Router::new();
     router.get("/", handler::handler_a);
@@ -73,7 +61,7 @@ fn main() {
 
     // initialize server
     let addr = "127.0.0.1:8080";
-    println!("run web server on {}", addr);
+    info!("run web server on {addr}");
     let listener = TcpListener::bind(addr).unwrap();
 
     for stream in listener.incoming() {

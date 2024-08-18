@@ -4,28 +4,38 @@ use std::collections::HashMap;
 type Handler = fn(&request::Request) -> anyhow::Result<String>;
 
 pub struct Router {
-    routes: HashMap<(String, String), Handler>,
+    route_map: HashMap<(String, String), Handler>,
 }
 
 impl Router {
     pub fn new() -> Self {
         Router {
-            routes: HashMap::new(),
+            route_map: HashMap::new(),
         }
     }
 
     pub fn get(&mut self, path: &str, handler: Handler) {
-        self.routes
+        self.route_map
             .insert(("GET".to_string(), path.to_string()), handler);
     }
 
     pub fn post(&mut self, path: &str, handler: Handler) {
-        self.routes
+        self.route_map
             .insert(("POST".to_string(), path.to_string()), handler);
     }
 
+    pub fn put(&mut self, path: &str, handler: Handler) {
+        self.route_map
+            .insert(("PUT".to_string(), path.to_string()), handler);
+    }
+
+    pub fn delete(&mut self, path: &str, handler: Handler) {
+        self.route_map
+            .insert(("DELETE".to_string(), path.to_string()), handler);
+    }
+
     pub fn route(&self, method: &str, path: &str) -> Option<&Handler> {
-        self.routes.get(&(method.to_string(), path.to_string()))
+        self.route_map.get(&(method.to_string(), path.to_string()))
     }
 }
 

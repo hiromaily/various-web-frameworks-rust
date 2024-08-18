@@ -14,4 +14,15 @@ impl Request {
             body,
         }
     }
+
+    pub fn print(&self) {
+        // let method = &request.method;
+        // let path = &request.path;
+        // let query = &request.query;
+        // let body = &request.body;
+        println!(
+            "get_method_path(): \n method:{:?}, path:{}, query: {:?}, body:{:?}",
+            self.method, self.path, self.query, self.body,
+        );
+    }
 }

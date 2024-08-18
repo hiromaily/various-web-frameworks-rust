@@ -1,6 +1,6 @@
 .PHONY: run
 run:
-	cargo run
+	RUST_LOG=debug cargo run
 
 .PHONY: req
 req: req-get req-post

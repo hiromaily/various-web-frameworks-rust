@@ -34,6 +34,12 @@ pub fn get_query_parameters(path: &str) -> Option<(&str, &str)> {
     path.find('?').map(|pos| (&path[..pos], &path[pos + 1..]))
 }
 
+// # Examples
+//
+// ```
+// parser::parse_url(format!("http://dummy.com{}", path).as_str());
+// ```
+#[allow(dead_code, unused_variables)]
 pub fn parse_url(url_path: &str) {
     // dummy host is enough to retrieve to parse
     //let divided_url = Url::parse(format!("http://{}{}", host, path).as_str()).unwrap();
@@ -47,12 +53,7 @@ pub fn parse_url(url_path: &str) {
     )
 }
 
-// get_req_info() returns
-// # Examples
-//
-// ```
-// parser::parse_url(format!("http://dummy.com{}", path).as_str());
-// ```
+// get_req_info() returns Request
 pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<request::Request>> {
     let mut buffer = [0; 1024];
     let bytes_read = stream.read(&mut buffer)?;
