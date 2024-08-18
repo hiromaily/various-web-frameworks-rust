@@ -1,13 +1,24 @@
-use log::info;
+use clap::Parser;
+use log::{debug, info};
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
 // local
-use webserver::errors;
+use webserver::errors::HTTPErrorMessage;
 use webserver::handler;
 use webserver::middleware;
 use webserver::parser;
 use webserver::router;
+
+/// single thread HTTP server
+#[derive(Parser)]
+#[command(name = "SingleThreadHTTPServer")]
+#[command(about = "A single thread HTTP server with middleware", long_about = None)]
+struct Args {
+    /// Port number to listen on
+    #[arg(short, long, default_value_t = 8080)]
+    port: u16,
+}
 
 fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::Result<()> {
     // Call get_method_path and handle each scenario
@@ -19,28 +30,17 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
         Some(req) => req,
         None => return Ok(()),
     };
-    request.print();
+    debug!("{:?}", request);
 
     // middleware
     if let Err(e) = router.run_middleware(&request) {
-        // Determine the HTTP status code based on the error
-        // let response = match e.downcast_ref::<errors::HTTPErrorMessage>() {
-        //     Some(_) => {
-        //         "HTTP/1.1 415 Unsupported Media Type\r\n\r\n<h1>415 Unsupported Media Type</h1>"
-        //     }
-        //     None => "HTTP/1.1 400 Bad Request\r\n\r\n<h1>400 Bad Request</h1>",
-        // };
         let custom_error = e
-            .downcast_ref::<errors::HTTPErrorMessage>()
-            .unwrap_or(&errors::HTTPErrorMessage::InvalidRequestFormat);
+            .downcast_ref::<HTTPErrorMessage>()
+            .unwrap_or(&HTTPErrorMessage::InvalidRequestFormat);
 
-        let response = format!(
-            "HTTP/1.1 {} {}\r\n\r\n<h1>{}</h1>",
-            custom_error.status_code(),
-            custom_error,
-            custom_error
-        );
+        let response = custom_error.response();
         stream.write_all(response.as_bytes())?;
+        stream.flush()?;
         return Ok(()); // Stop processing further after the error
     }
 
@@ -52,7 +52,7 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
             stream.write_all(response.as_bytes())?;
         }
         None => {
-            let response = "HTTP/1.1 404 NOT FOUND\r\n\r\n<h1>404 Not Found</h1>";
+            let response = HTTPErrorMessage::NotFound.response();
             stream.write_all(response.as_bytes())?;
         }
     }
@@ -79,6 +79,10 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
 fn main() {
     env_logger::init();
 
+    // args
+    let args = Args::parse();
+    let port = args.port;
+
     // configure router
     let mut router = router::Router::new();
     router.add_middleware(middleware::ContentTypeMiddleware);
@@ -86,7 +90,7 @@ fn main() {
     router.post("/submit", handler::handler_b);
 
     // initialize server
-    let addr = "127.0.0.1:8080";
+    let addr = format!("127.0.0.1:{}", port);
     info!("run web server on {addr}");
     let listener = TcpListener::bind(addr).unwrap();
 

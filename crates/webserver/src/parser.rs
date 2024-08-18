@@ -6,9 +6,7 @@ use std::net::TcpStream;
 use std::str;
 use url::Url;
 
-// FIXME: expected named lifetime parameter
-//fn extract_host_header(headers: &[httparse::Header<'_>; 16]) -> &str {
-#[allow(dead_code, unused_variables)]
+#[allow(dead_code)]
 fn get_host<'a>(headers: &'a [httparse::Header<'a>; 16]) -> &'a str {
     headers
         .iter()
@@ -17,15 +15,16 @@ fn get_host<'a>(headers: &'a [httparse::Header<'a>; 16]) -> &'a str {
         .unwrap_or("")
 }
 
-// get request body for post request
 fn get_request_body(buffer: &[u8]) -> Option<String> {
     // .ok() method converts the Result into an Option
     let request_str = str::from_utf8(buffer).ok()?;
     let body_start = request_str.find("\r\n\r\n")? + 4;
+    if request_str[body_start..].is_empty() {
+        return None;
+    }
     Some(request_str[body_start..].to_string())
 }
 
-// retrieve query from path
 pub fn get_query_parameters(path: &str) -> Option<(&str, &str)> {
     // sprit path into path and query by `?`
     // if let Some(pos) = path.find('?') {
@@ -41,8 +40,8 @@ pub fn get_query_parameters(path: &str) -> Option<(&str, &str)> {
 // ```
 // parser::parse_url(format!("http://dummy.com{}", path).as_str());
 // ```
-#[allow(dead_code, unused_variables)]
-pub fn parse_url(url_path: &str) {
+#[allow(dead_code)]
+fn parse_url(url_path: &str) {
     // dummy host is enough to retrieve to parse
     //let divided_url = Url::parse(format!("http://{}{}", host, path).as_str()).unwrap();
     let divided_url = Url::parse(url_path).unwrap();
