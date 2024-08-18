@@ -1,5 +1,6 @@
 use crate::request;
 use httparse::EMPTY_HEADER;
+use std::collections::HashMap;
 use std::io::prelude::*;
 use std::net::TcpStream;
 use std::str;
@@ -18,6 +19,7 @@ fn get_host<'a>(headers: &'a [httparse::Header<'a>; 16]) -> &'a str {
 
 // get request body for post request
 fn get_request_body(buffer: &[u8]) -> Option<String> {
+    // .ok() method converts the Result into an Option
     let request_str = str::from_utf8(buffer).ok()?;
     let body_start = request_str.find("\r\n\r\n")? + 4;
     Some(request_str[body_start..].to_string())
@@ -71,6 +73,14 @@ pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<request::Re
     let method = req.method.unwrap_or("").to_string();
     let path = req.path.unwrap_or("");
 
+    // get headers
+    let mut headers_map = HashMap::new();
+    for header in req.headers.iter() {
+        let name = header.name.to_string();
+        let value = std::str::from_utf8(header.value)?.to_string();
+        headers_map.insert(name, value);
+    }
+
     // get query
     // can be replaced by `Url::parse``
     let (path, query) = if let Some((path, query)) = get_query_parameters(path) {
@@ -99,6 +109,7 @@ pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<request::Re
     Ok(Some(request::Request::new(
         method,
         path.to_string(),
+        headers_map,
         query,
         body,
     )))

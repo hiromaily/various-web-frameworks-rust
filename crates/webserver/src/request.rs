@@ -1,15 +1,25 @@
+use std::collections::HashMap;
+
 pub struct Request {
     pub method: String,
     pub path: String,
+    pub headers: HashMap<String, String>,
     pub query: Option<String>,
     pub body: Option<String>,
 }
 
 impl Request {
-    pub fn new(method: String, path: String, query: Option<String>, body: Option<String>) -> Self {
+    pub fn new(
+        method: String,
+        path: String,
+        headers: HashMap<String, String>,
+        query: Option<String>,
+        body: Option<String>,
+    ) -> Self {
         Request {
             method,
             path,
+            headers,
             query,
             body,
         }
@@ -21,8 +31,8 @@ impl Request {
         // let query = &request.query;
         // let body = &request.body;
         println!(
-            "get_method_path(): \n method:{:?}, path:{}, query: {:?}, body:{:?}",
-            self.method, self.path, self.query, self.body,
+            "get_method_path(): \n method:{:?}, path:{}, headers: {:?}, query: {:?}, body:{:?}",
+            self.method, self.path, self.headers, self.query, self.body,
         );
     }
 }

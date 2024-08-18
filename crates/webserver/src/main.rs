@@ -4,6 +4,7 @@ use std::net::{TcpListener, TcpStream};
 
 // local
 use webserver::handler;
+use webserver::middleware;
 use webserver::parser;
 use webserver::router;
 
@@ -18,6 +19,9 @@ fn handle_connection(mut stream: TcpStream, router: &router::Router) -> anyhow::
         None => return Ok(()),
     };
     request.print();
+
+    // middleware
+    router.run_middleware(&request)?;
 
     // handler
     let handler = router.route(&request.method, &request.path);
@@ -56,6 +60,7 @@ fn main() {
 
     // configure router
     let mut router = router::Router::new();
+    router.add_middleware(middleware::ContentTypeMiddleware);
     router.get("/", handler::handler_a);
     router.post("/submit", handler::handler_b);
 
