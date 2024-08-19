@@ -11,12 +11,13 @@ This is composed of various web frameworks such as [actix-web](https://actix.rs/
 
 [crates directory](./crates)
 
-| crate            | type | explanation                                        |
-| ---------------- | ---- | -------------------------------------------------- |
-| actix            | bin  | actix-web framework                                |
-| axum             | bin  | axum web framework                                 |
-| [WIP] web-server | bin  | single thread web server without framework         |
-| components       | lib  | framework common packages depended from bin crates |
+| crate             | type | explanation                                        |
+| ----------------- | ---- | -------------------------------------------------- |
+| actix             | bin  | actix-web framework                                |
+| axum              | bin  | axum web framework                                 |
+| [WIP] web-server  | bin  | single thread web server without framework         |
+| [WIP] grpc-server | bin  | gRPC server                                        |
+| components        | lib  | framework common packages depended from bin crates |
 
 ## Run web server
 
