@@ -11,12 +11,24 @@ path = "src/server.rs"
 name = "grpc-client"
 path = "src/client.rs"
 
+[[bin]] # Bin to run the gRPC web-server
+name = "grpcweb-server"
+path = "src/grpcweb_server.rs"
+
+[[bin]] # Bin to run the gRPC web-client
+name = "grpcweb-client"
+path = "src/grpcweb_client.rs"
+
 [dependencies]
 tonic = "0.12"
+tonic-web = "0.12"
 prost = "0.13"
 tokio = { version = "1", features = ["full"] }
 env_logger = "0.11"
 log = "0.4"
+tracing-subscriber = { version = "0.3" }
+hyper-util = "0.1"
+tower = { version = "0.4.0", features = ["full"] }
 
 [build-dependencies]
 tonic-build = "0.12"
