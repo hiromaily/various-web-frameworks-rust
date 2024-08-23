@@ -1,5 +1,6 @@
 use crate::request;
 use httparse::EMPTY_HEADER;
+use log::debug;
 use std::collections::HashMap;
 use std::io::prelude::*;
 use std::net::TcpStream;
@@ -56,11 +57,40 @@ fn parse_url(url_path: &str) {
 
 // get_req_info() returns Request
 pub fn get_req_info(mut stream: &TcpStream) -> anyhow::Result<Option<request::Request>> {
-    let mut buffer = [0; 1024];
-    let bytes_read = stream.read(&mut buffer)?;
-    if bytes_read == 0 {
-        println!("connection closed by client.");
-        return Ok(None);
+    // stream size may be bigger than 1024
+    // let mut buffer = [0; 1024];
+    // let bytes_read = stream.read(&mut buffer)?;
+    // if bytes_read == 0 {
+    //     println!("connection closed by client.");
+    //     return Ok(None);
+    // }
+
+    // `stream.read_to_end()` waits for the connection to be closed before returning
+    // let mut buffer = Vec::new();
+    // let bytes_read = stream.read_to_end(&mut buffer)?;
+
+    const CHUNK_SIZE: usize = 512;
+    let mut buffer = Vec::new();
+    let mut chunk = [0; CHUNK_SIZE];
+    let mut bytes_read: usize = 0;
+    loop {
+        match stream.read(&mut chunk) {
+            Ok(0) => {
+                break;
+            }
+            Ok(chunk_bytes_read) => {
+                debug!("Read {} bytes", chunk_bytes_read);
+                bytes_read += chunk_bytes_read;
+                buffer.extend_from_slice(&chunk[..chunk_bytes_read]);
+                if CHUNK_SIZE > chunk_bytes_read {
+                    break;
+                }
+            }
+            Err(e) => {
+                debug!("Error reading stream: {}", e);
+                break;
+            }
+        }
     }
 
     // handle headers
